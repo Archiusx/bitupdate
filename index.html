@@ -1276,25 +1276,43 @@ window.postAnnouncement = async function() {
 
 // ── RESOURCES ─────────────────────────────────────────────────────────
 const RESOURCES = {
-    Computer: [
-        { title: 'Computer Organization (8th Ed)', author: 'William Stallings', link: 'https://drive.google.com/' },
-        { title: 'Data Structures and Algorithms', author: 'Cormen (CLRS)', link: 'https://drive.google.com/' },
-        { title: 'Database Management Systems', author: 'Ramakrishnan', link: 'https://drive.google.com/' }
+    "First Year (FY)": [
+        {
+            title: "FY PYQ (All Subjects) - Set 1",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/14-MjWjZStCQhwGOWpprH8Sc44GrlX_cE"
+        },
+        {
+            title: "FY PYQ (All Subjects) - Set 2",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1bpFzsgC0Ri0zVgg6yEVJ6JqC9BazlMiP"
+        }
     ],
-    Civil: [
-        { title: 'Structural Analysis', author: 'Hibbeler', link: 'https://drive.google.com/' },
-        { title: 'Fluid Mechanics', author: 'Munson', link: 'https://drive.google.com/' }
+
+    "Second Year (SY)": [
+        {
+            title: "BTech SY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1MRgDb89eTYvRHOIh1RQrClZORIJ1134l"
+        }
     ],
-    Mechanical: [
-        { title: 'Thermodynamics', author: 'Cengel and Boles', link: 'https://drive.google.com/' },
-        { title: 'Engineering Mechanics', author: 'Hibbeler', link: 'https://drive.google.com/' }
+
+    "Third Year (TY)": [
+        {
+            title: "BTech TY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1Nhn4DwiE8ztVt_-QoOrkTDrSUq4b_DA-"
+        }
     ],
-    Electrical: [
-        { title: 'Circuits', author: 'Sadiku', link: 'https://drive.google.com/' },
-        { title: 'Electrical Machines', author: 'Chapman', link: 'https://drive.google.com/' }
+
+    "Final Year": [
+        {
+            title: "BTech Final Year PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1EPQ-g1d0dlmryhTNMplAmDHRYemoGH6E"
+        }
     ]
 };
-
 window.renderResourcesView = function(branch = 'Computer') {
     const feed = document.getElementById('resources-feed');
     const tabs = Object.keys(RESOURCES).map(b => `
