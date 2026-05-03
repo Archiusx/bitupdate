@@ -1,0 +1,34 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "support_tickets": {
+      ".read": "auth != null",
+      "$ticketId": {
+        ".write": "auth != null && (root.child('admins').child(auth.uid).exists() || data.child('authorId').val() == auth.uid || (!data.exists() && newData.child('authorId').val() == auth.uid))",
+        "authorId": {
+          ".validate": "newData.isString() && ((data.exists() && newData.val() == data.val()) || (!data.exists() && newData.val() == auth.uid))"
+        },
+        "title": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120" },
+        "description": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1500" },
+        "category": { ".validate": "newData.isString()" },
+        "year": { ".validate": "newData.isString()" },
+        "branch": { ".validate": "newData.isString()" }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('admins').child(auth.uid).exists())",
+        ".write": "auth != null && (auth.uid == $uid || root.child('admins').child(auth.uid).exists())"
+      }
+    },
+    "public_announcements": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "admins": {
+      ".read": "auth != null",
+      ".write": false
+    }
+  }
+}
