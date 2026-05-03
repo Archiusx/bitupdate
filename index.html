@@ -309,28 +309,105 @@ input:focus, textarea:focus, select:focus {
 <div id="main-app" class="hidden-safely flex-1 flex flex-col w-full max-w-full overflow-hidden">
 
     <!-- Navbar -->
-    <nav class="bg-slate-950/70 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-ticket-simple text-base"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-base leading-tight tracking-wide text-white">BIT Updates</h1>
-                    <p class="text-[9px] text-indigo-400 uppercase tracking-widest font-semibold">Support Portal</p>
-                </div>
+ <nav class="bg-black/70 backdrop-blur-md border-b border-white/10 sticky top-0 z-30 shadow-lg">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- LEFT: LOGO + TITLE -->
+        <div class="flex items-center gap-3">
+
+            <!-- 🔷 BIT SVG LOGO -->
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] transition">
+
+                <svg width="26" height="32" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                    <!-- Glow -->
+                    <defs>
+                        <filter id="navGlow">
+                            <feGaussianBlur stdDeviation="1" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- Tower -->
+                    <path d="M40 5 L65 35 V115 H15 V35 Z"
+                          stroke="white"
+                          stroke-width="2"
+                          filter="url(#navGlow)"/>
+
+                    <!-- Center Line -->
+                    <line x1="40" y1="5" x2="40" y2="115"
+                          stroke="white"
+                          stroke-width="1.2"
+                          opacity="0.7"/>
+
+                    <!-- Left Block -->
+                    <rect x="2" y="55" width="30" height="45"
+                          stroke="white"
+                          stroke-width="1.2"
+                          opacity="0.6"/>
+
+                    <!-- Triangle Windows -->
+                    <path d="M8 70 L18 60 L18 80 Z"
+                          stroke="white"
+                          stroke-width="1.2"
+                          opacity="0.6"/>
+
+                    <path d="M22 60 L30 70 L22 80 Z"
+                          stroke="white"
+                          stroke-width="1.2"
+                          opacity="0.6"/>
+
+                    <!-- Entrance -->
+                    <path d="M48 80 L70 110 L30 110 Z"
+                          stroke="white"
+                          stroke-width="1.2"
+                          opacity="0.7"/>
+
+                </svg>
+
             </div>
-            <div class="flex items-center gap-3">
-                <div class="hidden sm:flex flex-col items-end">
-                    <span id="user-name" class="text-sm font-semibold text-white leading-tight">Student</span>
-                    <span id="admin-badge" class="hidden-safely text-[9px] bg-rose-600 text-white px-1.5 py-0.5 rounded uppercase font-bold tracking-widest mt-0.5">Admin</span>
-                </div>
-                <button id="btn-menu" class="text-slate-400 hover:text-white p-2.5 rounded-xl hover:bg-slate-800 transition border border-transparent hover:border-slate-700" aria-label="Profile">
-                    <i class="fa-solid fa-user-circle text-xl"></i>
-                </button>
+
+            <!-- TEXT -->
+            <div>
+                <h1 class="font-semibold text-sm leading-tight tracking-wide text-white">
+                    BIT Updates
+                </h1>
+                <p class="text-[9px] text-white/50 uppercase tracking-widest font-medium">
+                    Support Portal
+                </p>
             </div>
+
         </div>
-    </nav>
+
+        <!-- RIGHT SIDE -->
+        <div class="flex items-center gap-3">
+
+            <div class="hidden sm:flex flex-col items-end">
+                <span id="user-name" class="text-sm font-semibold text-white leading-tight">
+                    Student
+                </span>
+
+                <span id="admin-badge"
+                    class="hidden-safely text-[9px] bg-white text-black px-1.5 py-0.5 rounded uppercase font-bold tracking-widest mt-0.5">
+                    Admin
+                </span>
+            </div>
+
+            <!-- PROFILE BUTTON -->
+            <button id="btn-menu"
+                class="text-white/60 hover:text-white p-2.5 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/10">
+
+                <i class="fa-solid fa-user-circle text-xl"></i>
+            </button>
+
+        </div>
+
+    </div>
+                    </nav>
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="hidden-safely fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
