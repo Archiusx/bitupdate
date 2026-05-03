@@ -506,16 +506,37 @@ input:focus, textarea:focus, select:focus {
                     </div>
 
                     <!-- Branch Selector -->
-                    <div class="space-y-2">
-                        <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Branch</label>
-                        <div class="grid grid-cols-2 gap-2" id="branch-selector">
-                            <button type="button" data-value="Computer" onclick="selectPill('ticket-branch', this)" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">Computer</button>
-                            <button type="button" data-value="Civil" onclick="selectPill('ticket-branch', this)" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">Civil</button>
-                            <button type="button" data-value="Mechanical" onclick="selectPill('ticket-branch', this)" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">Mechanical</button>
-                            <button type="button" data-value="Electrical" onclick="selectPill('ticket-branch', this)" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">Electrical</button>
-                        </div>
-                        <input type="hidden" id="ticket-branch" value="">
-                    </div>
+<div class="space-y-2">
+    <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Branch</label>
+    <div class="grid grid-cols-2 gap-2" id="branch-selector">
+        
+        <button type="button" data-value="Computer" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-laptop-code text-blue-400"></i>
+            Computer
+        </button>
+
+        <button type="button" data-value="Civil" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-building text-amber-400"></i>
+            Civil
+        </button>
+
+        <button type="button" data-value="Mechanical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-gear text-gray-400"></i>
+            Mechanical
+        </button>
+
+        <button type="button" data-value="Electrical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-yellow-400"></i>
+            Electrical
+        </button>
+
+    </div>
+    <input type="hidden" id="ticket-branch" value="">
+</div>
 
                     <input type="text" id="ticket-title" placeholder="Brief subject..." maxlength="120" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 transition">
                     <textarea id="ticket-desc" rows="4" placeholder="Describe the issue in detail..." maxlength="1500" class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 resize-none transition"></textarea>
