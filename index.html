@@ -309,21 +309,24 @@ input:focus, textarea:focus, select:focus {
 <div id="main-app" class="hidden-safely flex-1 flex flex-col w-full max-w-full overflow-hidden">
 
     <!-- Navbar -->
- <nav class="bg-black/70 backdrop-blur-md border-b border-white/10 sticky top-0 z-30 shadow-lg">
+
+
+        <!-- RIGHT SIDE -->
+        <nav class="bg-black/70 backdrop-blur-md border-b border-white/10 sticky top-0 z-30 shadow-lg">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-        <!-- LEFT: LOGO + TITLE -->
+        <!-- LEFT -->
         <div class="flex items-center gap-3">
 
-            <!-- 🔷 BIT SVG LOGO -->
+            <!-- 🔷 MINIMAL TOWER LOGO -->
             <div class="w-10 h-10 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] transition">
 
-                <svg width="26" height="32" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="22" height="30" viewBox="0 0 60 120" fill="none" xmlns="http://www.w3.org/2000/svg">
 
                     <!-- Glow -->
                     <defs>
-                        <filter id="navGlow">
+                        <filter id="towerGlow">
                             <feGaussianBlur stdDeviation="1" result="blur"/>
                             <feMerge>
                                 <feMergeNode in="blur"/>
@@ -332,39 +335,17 @@ input:focus, textarea:focus, select:focus {
                         </filter>
                     </defs>
 
-                    <!-- Tower -->
-                    <path d="M40 5 L65 35 V115 H15 V35 Z"
+                    <!-- Tower Shape -->
+                    <path d="M30 5 L50 35 V115 H10 V35 Z"
                           stroke="white"
                           stroke-width="2"
-                          filter="url(#navGlow)"/>
+                          fill="none"
+                          filter="url(#towerGlow)"/>
 
-                    <!-- Center Line -->
-                    <line x1="40" y1="5" x2="40" y2="115"
+                    <!-- Center Divider -->
+                    <line x1="30" y1="5" x2="30" y2="115"
                           stroke="white"
-                          stroke-width="1.2"
-                          opacity="0.7"/>
-
-                    <!-- Left Block -->
-                    <rect x="2" y="55" width="30" height="45"
-                          stroke="white"
-                          stroke-width="1.2"
-                          opacity="0.6"/>
-
-                    <!-- Triangle Windows -->
-                    <path d="M8 70 L18 60 L18 80 Z"
-                          stroke="white"
-                          stroke-width="1.2"
-                          opacity="0.6"/>
-
-                    <path d="M22 60 L30 70 L22 80 Z"
-                          stroke="white"
-                          stroke-width="1.2"
-                          opacity="0.6"/>
-
-                    <!-- Entrance -->
-                    <path d="M48 80 L70 110 L30 110 Z"
-                          stroke="white"
-                          stroke-width="1.2"
+                          stroke-width="1.5"
                           opacity="0.7"/>
 
                 </svg>
@@ -373,21 +354,21 @@ input:focus, textarea:focus, select:focus {
 
             <!-- TEXT -->
             <div>
-                <h1 class="font-semibold text-sm leading-tight tracking-wide text-white">
+                <h1 class="font-semibold text-sm text-white tracking-wide">
                     BIT Updates
                 </h1>
-                <p class="text-[9px] text-white/50 uppercase tracking-widest font-medium">
+                <p class="text-[9px] text-white/50 uppercase tracking-widest">
                     Support Portal
                 </p>
             </div>
 
         </div>
 
-        <!-- RIGHT SIDE -->
+        <!-- RIGHT -->
         <div class="flex items-center gap-3">
 
             <div class="hidden sm:flex flex-col items-end">
-                <span id="user-name" class="text-sm font-semibold text-white leading-tight">
+                <span id="user-name" class="text-sm font-semibold text-white">
                     Student
                 </span>
 
@@ -397,7 +378,6 @@ input:focus, textarea:focus, select:focus {
                 </span>
             </div>
 
-            <!-- PROFILE BUTTON -->
             <button id="btn-menu"
                 class="text-white/60 hover:text-white p-2.5 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/10">
 
@@ -407,7 +387,7 @@ input:focus, textarea:focus, select:focus {
         </div>
 
     </div>
-                    </nav>
+        </nav>
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="hidden-safely fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
