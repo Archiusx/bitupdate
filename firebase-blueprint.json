@@ -1,0 +1,37 @@
+{
+  "entities": {
+    "announcement": {
+      "title": "Public Announcement",
+      "description": "An update posted by an administrator.",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "authorName", "createdAt"]
+    },
+    "ticket": {
+      "title": "Support Ticket",
+      "description": "A user-submitted support ticket.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "authorId": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "closed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "authorId", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/public_announcements/{announcementId}": {
+      "schema": "announcement",
+      "description": "Collection of public announcements visible to all."
+    },
+    "/tickets/{ticketId}": {
+      "schema": "ticket",
+      "description": "Collection of user support tickets."
+    }
+  }
+}

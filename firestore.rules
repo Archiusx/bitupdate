@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+
+    // --- Global Safety Net ---
+    match /{document=**} { allow read, write: if false; }
+
+    // --- Users ---
+    match /users/{userId} {
+      allow read, create, update, delete: if isOwner(userId) || isAdmin();
+    }
+
+    // --- Announcements ---
+    match /public_announcements/{announcementId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // --- Tickets ---
+    match /tickets/{ticketId} {
+      // Must be signed in, and if listing, they can only see their own (or admin sees all)
+      allow list: if isSignedIn() && (isAdmin() || resource.data.authorId == request.auth.uid);
+      allow get: if isSignedIn() && (isAdmin() || resource.data.authorId == request.auth.uid);
+      
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      
+      allow update: if isAdmin();
+      
+      allow delete: if isAdmin();
+    }
+  }
+}
