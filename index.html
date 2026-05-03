@@ -462,28 +462,35 @@ input:focus, textarea:focus, select:focus {
                             <span id="selected-category-text" class="flex items-center gap-2">
                                 <i class="fa-solid fa-tag text-slate-500 text-xs"></i> Select category...
                             </span>
-                            <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
-                        </button>
-                        <div id="category-options" class="absolute hidden z-20 w-full bg-slate-900 border border-slate-700 mt-1 rounded-xl shadow-2xl overflow-hidden">
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('General','General')">
-                                <i class="fa-solid fa-circle-dot text-slate-400 text-xs w-4"></i> General
-                            </div>
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Circular','Circular / Notice')">
-                                <i class="fa-solid fa-circle-dot text-blue-400 text-xs w-4"></i> Circular / Notice
-                            </div>
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Academic','Academic Query')">
-                                <i class="fa-solid fa-circle-dot text-emerald-400 text-xs w-4"></i> Academic Query
-                            </div>
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Exam','Exam and Results')">
-                                <i class="fa-solid fa-circle-dot text-purple-400 text-xs w-4"></i> Exam and Results
-                            </div>
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Technical','Technical / Portal')">
-                                <i class="fa-solid fa-circle-dot text-amber-400 text-xs w-4"></i> Technical / Portal
-                            </div>
-                            <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Other','Other Issue')">
-                                <i class="fa-solid fa-circle-dot text-rose-400 text-xs w-4"></i> Other Issue
-                            </div>
-                        </div>
+<i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+</button>
+<div id="category-options" class="absolute hidden z-20 w-full bg-slate-900 border border-slate-700 mt-1 rounded-xl shadow-2xl overflow-hidden">
+    
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('General','General')">
+        <i class="fa-solid fa-layer-group text-slate-400 text-xs w-4"></i> General
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Circular','Circular / Notice')">
+        <i class="fa-solid fa-bullhorn text-blue-400 text-xs w-4"></i> Circular / Notice
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Academic','Academic Query')">
+        <i class="fa-solid fa-book-open text-emerald-400 text-xs w-4"></i> Academic Query
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Exam','Exam and Results')">
+        <i class="fa-solid fa-file-pen text-purple-400 text-xs w-4"></i> Exam and Results
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Technical','Technical / Portal')">
+        <i class="fa-solid fa-desktop text-amber-400 text-xs w-4"></i> Technical / Portal
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Other','Other Issue')">
+        <i class="fa-solid fa-circle-question text-rose-400 text-xs w-4"></i> Other Issue
+    </div>
+
+</div>
                     </div>
 
                     <!-- Year Selector -->
