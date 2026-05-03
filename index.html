@@ -403,8 +403,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import {
     getDatabase, ref as rtdbRef, push, onValue, update as rtdbUpdate,
-    remove as rtdbRemove, get as rtdbGet, query as rtdbQuery,
-    orderByChild as rtdbOrderByChild, limitToLast
+    remove as rtdbRemove, get as rtdbGet
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
 // ── CONFIG ───────────────────────────────────────────────────────────
@@ -678,7 +677,7 @@ document.getElementById('btn-save-profile').onclick = async function() {
 
 // ── REALTIME LISTENERS ────────────────────────────────────────────────
 function startListeners() {
-    const tq = rtdbQuery(rtdbRef(rtdb, TICKETS_COLLECTION), rtdbOrderByChild('createdAtMs'), limitToLast(200));
+    const tq = rtdbRef(rtdb, TICKETS_COLLECTION);
     // Fetch current tickets first, then paint progressively within 3 seconds max.
     rtdbGet(tq).then(snap => {
         const rows = snap.val() || {};
@@ -714,7 +713,12 @@ function progressiveHydrateTickets(sortedTickets) {
     ticketHydrationTimer = null;
 
     const total = sortedTickets.length;
-    if (!total) return;
+    if (!total) {
+        allTickets = [];
+        if (currentView === 'tickets') renderTickets();
+        updateTicketCount();
+        return;
+    }
 
     const startedAt = Date.now();
     const maxDurationMs = 3000;
