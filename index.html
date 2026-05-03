@@ -15,130 +15,187 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
-    body {
-        font-family: 'DM Sans', sans-serif;
-        background-color: #000000;
-        color: #f5f5f5;
-    }
+/* ===== ROOT DESIGN TOKENS ===== */
+:root {
+    --bg-main: #000000;
+    --bg-soft: #0a0a0a;
+    --bg-glass: rgba(20, 20, 20, 0.65);
 
-    /* Glass Card - Monochrome */
-    .glass-card {
-        background: rgba(20, 20, 20, 0.75);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-        border-radius: 14px;
-    }
+    --text-main: #f5f5f5;
+    --text-muted: #a1a1aa;
 
-    /* Subtle Pulse Button (White Glow) */
-    .pulse-btn {
-        animation: pulse-animation 2s infinite;
-    }
+    --border-soft: rgba(255,255,255,0.08);
 
-    @keyframes pulse-animation {
-        0% {
-            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
-        }
-        70% {
-            box-shadow: 0 0 0 14px rgba(255, 255, 255, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-        }
-    }
+    /* Neon Accent (controlled, not overkill) */
+    --neon: #ffffff;
+    --neon-glow: rgba(255,255,255,0.35);
+}
 
-    .hidden-safely {
-        display: none !important;
-    }
+/* ===== BASE ===== */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at top, #0a0a0a, #000000);
+    color: var(--text-main);
+}
 
-    /* Scrollbar - Minimal */
-    ::-webkit-scrollbar {
-        width: 5px;
-    }
+/* ===== GLASS MORPHISM CARD ===== */
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.3s ease;
+}
 
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.85),
+        0 0 20px rgba(255,255,255,0.06);
+}
 
-    ::-webkit-scrollbar-thumb {
-        background: #444;
-        border-radius: 10px;
-    }
+/* ===== NEON BUTTON ===== */
+.neon-btn {
+    border: 1px solid var(--neon);
+    color: var(--text-main);
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: #777;
-    }
+.neon-btn:hover {
+    background: rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 10px var(--neon-glow),
+        0 0 25px rgba(255,255,255,0.15);
+    transform: scale(1.03);
+}
 
-    /* Modal Animation */
-    .modal-enter {
-        animation: fadeIn 0.18s ease-out forwards;
-    }
+/* ===== PULSE (CONTROLLED) ===== */
+.pulse-btn {
+    animation: pulse 2.2s infinite;
+}
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.96);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 var(--neon-glow); }
+    70% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
 
-    /* Inputs - Clean Focus */
-    input:focus,
-    textarea:focus,
-    select:focus {
-        outline: none;
-        border-color: #ffffff;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
-        background-color: #111;
-    }
+/* ===== INPUTS ===== */
+input, textarea, select {
+    background: #0d0d0d;
+    color: var(--text-main);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.25s ease;
+}
 
-    input, textarea, select {
-        background: #0d0d0d;
-        color: #f5f5f5;
-        border: 1px solid #333;
-        border-radius: 8px;
-        padding: 10px;
-    }
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,0.12),
+        0 0 10px rgba(255,255,255,0.1);
+    background: #111;
+}
 
-    /* Status Filter */
-    .status-filter-btn.active {
-        background: #111;
-        color: #ffffff;
-        border: 1px solid #555;
-    }
+/* ===== NAV TABS ===== */
+.nav-tab-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
 
-    /* Navigation Tabs */
-    .nav-tab-btn {
-        transition: all 0.2s ease;
-    }
+.nav-tab-btn.active {
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 12px rgba(255,255,255,0.08);
+}
 
-    .nav-tab-btn.active {
-        color: #ffffff;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-    }
+.nav-tab-btn:hover {
+    background: rgba(255,255,255,0.05);
+}
 
-    /* Category Hover */
-    .cat-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
+/* ===== FILTER BUTTON ===== */
+.status-filter-btn.active {
+    background: #111;
+    border: 1px solid #444;
+    box-shadow: 0 0 10px rgba(255,255,255,0.08);
+}
 
-    /* Ticket Card */
-    .ticket-card {
-        transition: all 0.2s ease;
-        border: 1px solid #222;
-        border-radius: 12px;
-        background: #0a0a0a;
-    }
+/* ===== CATEGORY ITEM ===== */
+.cat-item {
+    transition: all 0.2s ease;
+}
 
-    .ticket-card:hover {
-        border-color: #555;
-        background: #111;
-    }
-</style>
+.cat-item:hover {
+    background: rgba(255,255,255,0.06);
+    transform: translateX(4px);
+}
+
+/* ===== TICKET CARD ===== */
+.ticket-card {
+    background: var(--bg-soft);
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    border-color: #555;
+    box-shadow:
+        0 0 15px rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* ===== MODAL ===== */
+.modal-enter {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== SVG ICON SYSTEM ===== */
+.icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-muted);
+    transition: all 0.25s ease;
+}
+
+.icon:hover {
+    stroke: var(--neon);
+    filter: drop-shadow(0 0 6px var(--neon-glow));
+    transform: scale(1.1);
+}
+
+/* ===== HIDDEN ===== */
+.hidden-safely {
+    display: none !important;
+}
+    </style>
+
 </head>
 <body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
 
