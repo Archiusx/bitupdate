@@ -1314,7 +1314,7 @@ let selectedCategory = "First Year (FY)";
         }
     ]
 };
-window.renderResourcesView = function(branch = 'Computer') {
+window.renderResourcesView = function(branch = "First Year (FY)") {
     const feed = document.getElementById('resources-feed');
     const tabs = Object.keys(RESOURCES).map(b => `
         <button onclick="renderResourcesView('${b}')" class="px-4 py-2 rounded-xl text-sm font-medium transition ${b===branch?'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20':'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'}">${b}</button>`
@@ -1328,7 +1328,7 @@ window.renderResourcesView = function(branch = 'Computer') {
             <a href="${r.link}" target="_blank" rel="noopener" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 flex items-center gap-1">
                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Open
             </a>
-        </div>`).join('') || '<p class="text-slate-500 text-sm text-center py-4">No resources available.</p>';
+        </div>`).join('') || '<p class="text-slate-500 text-sm text-center py-4">Select your Year</p>';
     feed.innerHTML = `<div class="flex flex-wrap gap-2 mb-5">${tabs}</div><div class="space-y-3">${items}</div>`;
 };
 
