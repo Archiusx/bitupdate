@@ -719,65 +719,46 @@ input:focus, textarea:focus, select:focus {
         </div>
 
         <!-- RIGHT: Feed -->
-<div class="lg:col-span-3 flex flex-col" style="min-height:85vh;">
-    <div class="glass-card rounded-2xl flex flex-col overflow-hidden border border-slate-800 shadow-xl h-full">
+        <div class="lg:col-span-3 flex flex-col" style="min-height:85vh;">
+            <div class="glass-card rounded-2xl flex flex-col overflow-hidden border border-slate-800 shadow-xl h-full">
 
-        <!-- Feed Header -->
-        <div class="p-5 border-b border-slate-800 bg-slate-950/60 flex flex-col gap-4 shrink-0">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                        <i class="fa-solid fa-ticket-simple"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold text-white text-base tracking-tight">Support Desk</h2>
-                        <p class="text-xs text-slate-500">
-                            <span id="ticket-count">0</span> tickets in queue
-                        </p>
-                    </div>
-                </div>
+                <!-- Feed Header -->
+                <div class="p-5 border-b border-slate-800 bg-slate-950/60 flex flex-col gap-4 shrink-0">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <i class="fa-solid fa-ticket-simple"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-white text-base tracking-tight">Support Desk</h2>
+                                <p class="text-xs text-slate-500"><span id="ticket-count">0</span> tickets in queue</p>
+                            </div>
+                        </div>
+                        <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl w-full sm:w-auto">
+                            <button class="status-filter-btn active flex-1 sm:flex-none text-xs font-semibold px-3 py-1.5 rounded-lg transition" data-filter="all">All</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="open">Open</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="closed">Closed</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="mine">Mine</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 border-t border-slate-800 pt-4 overflow-x-auto pb-0.5">
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="tickets">Tickets</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="updates">Updates</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="dashboard">Dashboard</button>
+                        <button id="nav-admin-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="admin">Admin</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="resources">Resources</button>
+                        <button class="nav-tab-btn active text-xs font-medium px-3 py-1.5 rounded-lg transition whitespace-nowrap" data-view="about">About</button>
+                    </div>
+                </div>
 
-                <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl w-full sm:w-auto">
-                    <button class="status-filter-btn active flex-1 sm:flex-none text-xs font-semibold px-3 py-1.5 rounded-lg transition" data-filter="all">All</button>
-                    <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="open">Open</button>
-                    <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="closed">Closed</button>
-                    <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="mine">Mine</button>
-                </div>
-            </div>
-
-            <div class="flex gap-1 border-t border-slate-800 pt-4 overflow-x-auto pb-0.5">
-                <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="tickets">Tickets</button>
-                <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="updates">Updates</button>
-                <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="dashboard">Dashboard</button>
-                <button id="nav-admin-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="admin">Admin</button>
-                <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="resources">Resources</button>
-                <button class="nav-tab-btn active text-xs font-medium px-3 py-1.5 rounded-lg transition whitespace-nowrap" data-view="about">About</button>
-            </div>
-        </div>
-
-        <!-- Tickets View -->
-        <div id="view-tickets" class="hidden-safely flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4">
-
-            <!-- Loading -->
-            <div id="loading-feed" class="text-center py-20 text-indigo-400">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
-                <p class="text-sm font-medium text-slate-400">Connecting to database...</p>
-            </div>
-
-            <!-- Tickets List -->
-            <div id="tickets-list" class="flex flex-col gap-4"></div>
-
-            <!-- Empty State (safe add) -->
-            <div id="no-tickets" class="hidden text-center text-slate-400 py-10">
-                <i class="fa-regular fa-folder-open text-2xl mb-2"></i>
-                <p>No tickets found</p>
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
+                <!-- Tickets View -->
+                <div id="view-tickets" class="hidden-safely flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4">
+                    <div id="loading-feed" class="text-center py-20 text-indigo-400">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                        <p class="text-sm font-medium text-slate-400">Connecting to database...</p>
+                    </div>
+                    <div id="tickets-list" class="flex flex-col gap-4"></div>
+                </div> update this snippet and give final code with upvote 
                 <!-- Updates View -->
                 <div id="view-updates" class="hidden-safely flex-1 overflow-y-auto p-5">
                     <div id="admin-post-box" class="hidden-safely mb-5 bg-slate-800/60 p-4 rounded-xl border border-slate-700">
@@ -2557,29 +2538,6 @@ window.sendAdminNotification = async function() {
         document.getElementById('notif-send-body').value  = '';
         showToast('Notification broadcast to all users!');
     } catch(e) { showToast('Failed: ' + e.message, 'error'); }
-};
-
- import { ref, update, get } from "firebase/database";
-
-window.toggleUpvote = async function(ticketId) {
-    const user = auth.currentUser;
-    if (!user) {
-        alert("Login required");
-        return;
-    }
-
-    const voteRef = ref(db, `support_tickets/${ticketId}/upvotes/${user.uid}`);
-    const snapshot = await get(voteRef);
-
-    if (snapshot.exists()) {
-        await update(ref(db), {
-            [`support_tickets/${ticketId}/upvotes/${user.uid}`]: null
-        });
-    } else {
-        await update(ref(db), {
-            [`support_tickets/${ticketId}/upvotes/${user.uid}`]: true
-        });
-    }
 };
 </script>
 </body>
