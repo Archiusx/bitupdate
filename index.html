@@ -356,49 +356,47 @@ input:focus, textarea:focus, select:focus {
         <div class="flex justify-center mb-5 sm:mb-6 mt-4">
             <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
 
-                <style>
-                    .draw {
-                        stroke: white;
-                        fill: none;
-                        stroke-dasharray: 200;
-                        stroke-dashoffset: 200;
-                        animation: draw 1.5s ease forwards;
-                    }
+                <!-- Left -->
+                <path d="M30 5 L10 35"
+                      stroke="white" fill="none" stroke-width="2"
+                      stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" to="0" dur="1.5s" begin="0.2s" fill="freeze"/>
+                </path>
 
-                    .d1 { animation-delay: 0.2s; }
-                    .d2 { animation-delay: 0.6s; }
-                    .d3 { animation-delay: 1s; }
+                <!-- Right -->
+                <path d="M30 5 L50 35"
+                      stroke="white" fill="none" stroke-width="2"
+                      stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" to="0" dur="1.5s" begin="0.2s" fill="freeze"/>
+                </path>
 
-                    @keyframes draw {
-                        to { stroke-dashoffset: 0; }
-                    }
-
-                    .glow-final {
-                        animation: glowOn 0.8s ease forwards;
-                        animation-delay: 1.6s;
-                    }
-
-                    @keyframes glowOn {
-                        from { filter: none; }
-                        to {
-                            filter: drop-shadow(0 0 6px rgba(255,255,255,0.6))
-                                    drop-shadow(0 0 12px rgba(255,255,255,0.4));
-                        }
-                    }
-                </style>
-
-                <!-- Left + Right top -->
-                <path d="M30 5 L10 35" class="draw d1"/>
-                <path d="M30 5 L50 35" class="draw d1"/>
-
-                <!-- Vertical -->
-                <line x1="30" y1="5" x2="30" y2="95" class="draw d2"/>
+                <!-- Center -->
+                <line x1="30" y1="5" x2="30" y2="95"
+                      stroke="white" stroke-width="1.5"
+                      stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" to="0" dur="1.2s" begin="0.8s" fill="freeze"/>
+                </line>
 
                 <!-- Base -->
-                <path d="M10 35 V95 H50 V35" class="draw d2"/>
+                <path d="M10 35 V95 H50 V35"
+                      stroke="white" fill="none" stroke-width="2"
+                      stroke-dasharray="300" stroke-dashoffset="300">
+                    <animate attributeName="stroke-dashoffset" to="0" dur="1.2s" begin="0.8s" fill="freeze"/>
+                </path>
 
                 <!-- Triangle -->
-                <path d="M30 60 L45 90 H15 Z" class="draw d3 glow-final"/>
+                <path d="M30 60 L45 90 H15 Z"
+                      stroke="white" fill="none" stroke-width="1.5"
+                      stroke-dasharray="200" stroke-dashoffset="200">
+                    <animate attributeName="stroke-dashoffset" to="0" dur="1s" begin="1.4s" fill="freeze"/>
+                </path>
+
+                <!-- Glow AFTER full draw -->
+                <g>
+                    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.8s" fill="freeze"/>
+                    <rect width="60" height="100" fill="transparent"
+                          style="filter: drop-shadow(0 0 6px white) drop-shadow(0 0 12px white);"/>
+                </g>
 
             </svg>
         </div>
