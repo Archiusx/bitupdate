@@ -348,44 +348,73 @@ input:focus, textarea:focus, select:focus {
     </div>
 </div>
 <!-- LOGIN SCREEN -->
-<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-black z-50 fixed inset-0">
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-black fixed inset-0">
 
-    <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
+    <div class="glass-card p-6 sm:p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden flex flex-col items-center justify-center">
 
-        <!-- 🔷 CUSTOM SVG LOGO (Inspired from your image) -->
-        <div class="flex justify-center mb-6">
-            <svg width="70" height="90" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                
-                <!-- Tower -->
-                <path d="M30 5 L50 35 V95 H10 V35 Z" 
-                      stroke="white" stroke-width="2" fill="none"/>
+        <!-- 🔷 SVG LOGO -->
+        <div class="flex justify-center mb-5 sm:mb-6 mt-4">
+            <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
 
-                <!-- Center line -->
-                <line x1="30" y1="5" x2="30" y2="95" stroke="white" stroke-width="1.5"/>
+                <style>
+                    .draw {
+                        stroke: white;
+                        fill: none;
+                        stroke-dasharray: 200;
+                        stroke-dashoffset: 200;
+                        animation: draw 1.5s ease forwards;
+                    }
 
-                <!-- Base triangle -->
-                <path d="M30 60 L45 90 H15 Z" 
-                      stroke="white" stroke-width="1.5" fill="none"/>
+                    .d1 { animation-delay: 0.2s; }
+                    .d2 { animation-delay: 0.6s; }
+                    .d3 { animation-delay: 1s; }
 
-                <!-- Glow -->
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                    <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                </filter>
+                    @keyframes draw {
+                        to { stroke-dashoffset: 0; }
+                    }
+
+                    .glow-final {
+                        animation: glowOn 0.8s ease forwards;
+                        animation-delay: 1.6s;
+                    }
+
+                    @keyframes glowOn {
+                        from { filter: none; }
+                        to {
+                            filter: drop-shadow(0 0 6px rgba(255,255,255,0.6))
+                                    drop-shadow(0 0 12px rgba(255,255,255,0.4));
+                        }
+                    }
+                </style>
+
+                <!-- Left + Right top -->
+                <path d="M30 5 L10 35" class="draw d1"/>
+                <path d="M30 5 L50 35" class="draw d1"/>
+
+                <!-- Vertical -->
+                <line x1="30" y1="5" x2="30" y2="95" class="draw d2"/>
+
+                <!-- Base -->
+                <path d="M10 35 V95 H50 V35" class="draw d2"/>
+
+                <!-- Triangle -->
+                <path d="M30 60 L45 90 H15 Z" class="draw d3 glow-final"/>
+
             </svg>
         </div>
 
         <!-- Title -->
-        <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
+        <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
             BIT Updates
         </h1>
 
-        <p class="text-sm text-gray-400 mb-8 font-medium">
+        <!-- Tagline -->
+        <p class="text-xs sm:text-sm text-gray-400 mt-2 mb-4">
             Student Support & Feedback Portal
         </p>
+
+    </div>
+</div>
 
         <!-- Buttons -->
         <div class="space-y-3">
