@@ -402,54 +402,36 @@ input:focus, textarea:focus, select:focus {
         </div>
 
         <!-- Title -->
-        <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            BIT Updates
-        </h1>
+<h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+    BIT Updates
+</h1>
 
-        <!-- Tagline -->
-        <p class="text-xs sm:text-sm text-gray-400 mt-2 mb-4">
-            Student Support & Feedback Portal
-        </p>
+<p class="text-xs sm:text-sm text-gray-400 mt-2 mb-4">
+    Student Support & Feedback Portal
+</p>
 
-    </div>
+<!-- Buttons -->
+<div class="space-y-3 mt-4">
+
+    <!-- Google -->
+    <button id="btn-google-signin"
+        class="w-full flex items-center justify-center gap-3 bg-[#0d0d0d] border border-gray-700 text-gray-200 px-6 py-3.5 rounded-xl font-medium hover:bg-[#141414] transition">
+        
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+             class="w-5 h-5">
+        
+        <span>Sign in with Google</span>
+    </button>
+
+    <!-- Guest -->
+    <button id="btn-anon-signin"
+        class="w-full flex items-center justify-center gap-3 bg-[#111] text-gray-300 px-6 py-3.5 rounded-xl font-medium hover:bg-[#1a1a1a] transition">
+        
+        <i class="fa-solid fa-user-secret text-gray-400"></i>
+        <span>Continue as Guest</span>
+    </button>
+
 </div>
-
-        <!-- Buttons -->
-        <div class="space-y-3">
-
-            <!-- Google -->
-            <button id="btn-google-signin"
-                class="w-full flex items-center justify-center gap-3 bg-[#0d0d0d] border border-gray-700 text-gray-200 px-6 py-3.5 rounded-xl font-medium hover:bg-[#141414] hover:border-white transition-all hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-                
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                     class="w-5 h-5">
-                
-                <span>Sign in with Google</span>
-            </button>
-
-            <!-- Guest -->
-            <button id="btn-anon-signin"
-                class="w-full flex items-center justify-center gap-3 bg-[#111] text-gray-300 px-6 py-3.5 rounded-xl font-medium hover:bg-[#1a1a1a] transition-all hover:shadow-[0_0_8px_rgba(255,255,255,0.1)]">
-                
-                <i class="fa-solid fa-user-secret text-gray-400"></i>
-                <span>Continue as Guest</span>
-            </button>
-
-        </div>
-
-        <!-- Error -->
-        <p id="login-error"
-            class="hidden-safely text-xs text-red-400 mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-        </p>
-
-        <!-- Footer -->
-        <p class="text-xs text-gray-600 mt-6">
-            Secure student support tracking — BIT Wardha
-        </p>
-
-    </div>
-</div>
-
 
 <!-- MAIN APP -->
 <div id="main-app" class="hidden-safely flex-1 flex flex-col w-full max-w-full overflow-hidden">
