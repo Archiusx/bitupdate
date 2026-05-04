@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIT Updates | Student Support Portal</title>
+<meta name="description" content="A student-developed support interface for BIT Wardha. Submit academic queries, track resolution status, and stay informed.">
+<meta property="og:title" content="BIT Updates | Student Support Portal">
+<meta property="og:description" content="Submit academic queries securely, track resolution status, and stay informed through community-shared updates.">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <rect width='100' height='100' rx='20' fill='%231e293b'/>
+  <rect x='40' y='35' width='20' height='40' fill='%23f8fafc'/>
+  <polygon points='50,15 65,35 35,35' fill='%236366f1'/>
+  <rect x='45' y='45' width='4' height='4' fill='%231e293b'/>
+  <rect x='51' y='45' width='4' height='4' fill='%231e293b'/>
+  <rect x='45' y='52' width='4' height='4' fill='%231e293b'/>
+  <rect x='51' y='52' width='4' height='4' fill='%231e293b'/>
+</svg>">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+/* ===== ROOT DESIGN TOKENS ===== */
+:root {
+    --bg-main: #000000;
+    --bg-soft: #0a0a0a;
+    --bg-glass: rgba(20, 20, 20, 0.65);
+
+    --text-main: #f5f5f5;
+    --text-muted: #a1a1aa;
+
+    --border-soft: rgba(255,255,255,0.08);
+
+    /* Neon Accent (controlled, not overkill) */
+    --neon: #ffffff;
+    --neon-glow: rgba(255,255,255,0.35);
+}
+
+/* ===== BASE ===== */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at top, #0a0a0a, #000000);
+    color: var(--text-main);
+}
+
+/* ===== GLASS MORPHISM CARD ===== */
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.85),
+        0 0 20px rgba(255,255,255,0.06);
+}
+
+/* ===== NEON BUTTON ===== */
+.neon-btn {
+    border: 1px solid var(--neon);
+    color: var(--text-main);
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.neon-btn:hover {
+    background: rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 10px var(--neon-glow),
+        0 0 25px rgba(255,255,255,0.15);
+    transform: scale(1.03);
+}
+
+/* ===== PULSE (CONTROLLED) ===== */
+.pulse-btn {
+    animation: pulse 2.2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 var(--neon-glow); }
+    70% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* ===== INPUTS ===== */
+input, textarea, select {
+    background: #0d0d0d;
+    color: var(--text-main);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.25s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,0.12),
+        0 0 10px rgba(255,255,255,0.1);
+    background: #111;
+}
+
+/* ===== NAV TABS ===== */
+.nav-tab-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.nav-tab-btn.active {
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 12px rgba(255,255,255,0.08);
+}
+
+.nav-tab-btn:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* ===== FILTER BUTTON ===== */
+.status-filter-btn.active {
+    background: #111;
+    border: 1px solid #444;
+    box-shadow: 0 0 10px rgba(255,255,255,0.08);
+}
+
+/* ===== CATEGORY ITEM ===== */
+.cat-item {
+    transition: all 0.2s ease;
+}
+
+.cat-item:hover {
+    background: rgba(255,255,255,0.06);
+    transform: translateX(4px);
+}
+
+/* ===== TICKET CARD ===== */
+.ticket-card {
+    background: var(--bg-soft);
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    border-color: #555;
+    box-shadow:
+        0 0 15px rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* ===== MODAL ===== */
+.modal-enter {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== SVG ICON SYSTEM ===== */
+.icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-muted);
+    transition: all 0.25s ease;
+}
+
+.icon:hover {
+    stroke: var(--neon);
+    filter: drop-shadow(0 0 6px var(--neon-glow));
+    transform: scale(1.1);
+}
+
+/* ===== HIDDEN ===== */
+.hidden-safely {
+    display: none !important;
+}
+    </style>
+
+</head>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<!-- Toast -->
+<div id="toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+
+<!-- Confirm Dialog -->
+<div id="confirm-dialog" class="hidden-safely fixed inset-0 z-[9998] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl modal-enter">
+        <h3 class="text-white font-bold text-base mb-2" id="confirm-title">Confirm Action</h3>
+        <p class="text-slate-400 text-sm mb-6" id="confirm-msg">Are you sure?</p>
+        <div class="flex gap-3 justify-end">
+            <button id="confirm-cancel" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm transition">Cancel</button>
+            <button id="confirm-ok" class="px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-500 text-sm transition font-semibold">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Modal -->
+<div id="assign-modal" class="hidden-safely fixed inset-0 z-[9997] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl modal-enter">
+        <h3 class="text-white font-bold text-base mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-user-plus text-indigo-400"></i> Assign Ticket
+        </h3>
+        <p class="text-slate-500 text-xs mb-4" id="assign-modal-target"></p>
+        <input id="assign-modal-input" type="text" maxlength="60" placeholder="Enter assignee name..." class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 mb-4">
+        <div class="flex gap-3 justify-end">
+            <button onclick="closeAssignModal()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm transition">Cancel</button>
+            <button id="assign-modal-submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 text-sm transition font-semibold">Assign</button>
+        </div>
+    </div>
+</div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-black z-50 fixed inset-0">
+
+    <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
+
+        <!-- 🔷 CUSTOM SVG LOGO (Inspired from your image) -->
+        <div class="flex justify-center mb-6">
+            <svg width="70" height="90" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                
+                <!-- Tower -->
+                <path d="M30 5 L50 35 V95 H10 V35 Z" 
+                      stroke="white" stroke-width="2" fill="none"/>
+
+                <!-- Center line -->
+                <line x1="30" y1="5" x2="30" y2="95" stroke="white" stroke-width="1.5"/>
+
+                <!-- Base triangle -->
+                <path d="M30 60 L45 90 H15 Z" 
+                      stroke="white" stroke-width="1.5" fill="none"/>
+
+                <!-- Glow -->
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </svg>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
+            BIT Updates
+        </h1>
+
+        <p class="text-sm text-gray-400 mb-8 font-medium">
+            Student Support & Feedback Portal
+        </p>
+
+        <!-- Buttons -->
+        <div class="space-y-3">
+
+            <!-- Google -->
+            <button id="btn-google-signin"
+                class="w-full flex items-center justify-center gap-3 bg-[#0d0d0d] border border-gray-700 text-gray-200 px-6 py-3.5 rounded-xl font-medium hover:bg-[#141414] hover:border-white transition-all hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                     class="w-5 h-5">
+                
+                <span>Sign in with Google</span>
+            </button>
+
+            <!-- Guest -->
+            <button id="btn-anon-signin"
+                class="w-full flex items-center justify-center gap-3 bg-[#111] text-gray-300 px-6 py-3.5 rounded-xl font-medium hover:bg-[#1a1a1a] transition-all hover:shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                
+                <i class="fa-solid fa-user-secret text-gray-400"></i>
+                <span>Continue as Guest</span>
+            </button>
+
+        </div>
+
+        <!-- Error -->
+        <p id="login-error"
+            class="hidden-safely text-xs text-red-400 mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+        </p>
+
+        <!-- Footer -->
+        <p class="text-xs text-gray-600 mt-6">
+            Secure student support tracking — BIT Wardha
+        </p>
+
+    </div>
+</div>
+
+
+<!-- MAIN APP -->
+<div id="main-app" class="hidden-safely flex-1 flex flex-col w-full max-w-full overflow-hidden">
+
+    <!-- Navbar -->
+
+
+        <!-- RIGHT SIDE -->
+        <nav class="bg-black/70 backdrop-blur-md border-b border-white/10 sticky top-0 z-30 shadow-lg">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- LEFT -->
+        <div class="flex items-center gap-3">
+
+            <!-- 🔷 MINIMAL TOWER LOGO -->
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] transition">
+
+                <svg width="22" height="30" viewBox="0 0 60 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                    <!-- Glow -->
+                    <defs>
+                        <filter id="towerGlow">
+                            <feGaussianBlur stdDeviation="1" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- Tower Shape -->
+                    <path d="M30 5 L50 35 V115 H10 V35 Z"
+                          stroke="white"
+                          stroke-width="2"
+                          fill="none"
+                          filter="url(#towerGlow)"/>
+
+                    <!-- Center Divider -->
+                    <line x1="30" y1="5" x2="30" y2="115"
+                          stroke="white"
+                          stroke-width="1.5"
+                          opacity="0.7"/>
+
+                </svg>
+
+            </div>
+
+            <!-- TEXT -->
+            <div>
+                <h1 class="font-semibold text-sm text-white tracking-wide">
+                    BIT Updates
+                </h1>
+                <p class="text-[9px] text-white/50 uppercase tracking-widest">
+                    Support Portal
+                </p>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="flex items-center gap-3">
+
+            <div class="hidden sm:flex flex-col items-end">
+                <span id="user-name" class="text-sm font-semibold text-white">
+                    Student
+                </span>
+
+                <span id="admin-badge"
+                    class="hidden-safely text-[9px] bg-white text-black px-1.5 py-0.5 rounded uppercase font-bold tracking-widest mt-0.5">
+                    Admin
+                </span>
+            </div>
+
+            <button id="btn-menu"
+                class="text-white/60 hover:text-white p-2.5 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/10">
+
+                <i class="fa-solid fa-user-circle text-xl"></i>
+            </button>
+
+        </div>
+
+    </div>
+        </nav>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="hidden-safely fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[90vh] border border-slate-800">
+            <div class="bg-slate-800/60 p-5 flex justify-between items-center border-b border-slate-800">
+                <h2 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-indigo-400"></i> Edit Profile
+                </h2>
+                <button id="btn-close-modal" class="text-slate-500 hover:text-white bg-slate-800 p-2 rounded-full border border-slate-700 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Full Name</label>
+                    <input type="text" id="prof-name" maxlength="80" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">PRN Number</label>
+                    <input type="text" id="prof-prn" placeholder="e.g. 24046491245070" maxlength="20" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Branch</label>
+                        <input type="text" id="prof-branch" placeholder="e.g. CSE" maxlength="30" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Semester</label>
+                        <select id="prof-sem" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                            <option value="">Select...</option>
+                            <option value="I">Sem I</option><option value="II">Sem II</option>
+                            <option value="III">Sem III</option><option value="IV">Sem IV</option>
+                            <option value="V">Sem V</option><option value="VI">Sem VI</option>
+                            <option value="VII">Sem VII</option><option value="VIII">Sem VIII</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="btn-save-profile" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm px-5 py-3 shadow-md transition flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Profile
+                </button>
+                <button type="button" id="btn-logout-modal" class="w-full text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 font-medium rounded-xl text-sm px-5 py-3 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Secure Sign Out
+                </button>
+                <div id="admin-profile-badge" class="hidden-safely bg-rose-500/10 text-rose-300 px-3 py-2 rounded-lg font-bold text-xs uppercase tracking-widest text-center border border-rose-500/20">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> System Administrator
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+
+        <!-- LEFT: Form -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-indigo-500">
+                <h2 class="text-indigo-400 font-bold flex items-center gap-2 mb-2 text-sm tracking-wide uppercase">
+                    <i class="fa-solid fa-bullhorn"></i> Platform Notice
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed">This acts as a student-developed support interface. Submit academic queries securely, track resolution status, and stay informed through community-shared updates.</p>
+            </div>
+
+            <!-- Ticket Form -->
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="font-bold text-white mb-5 text-lg tracking-tight" id="form-title">Raise a Ticket</h2>
+                <div id="ticket-form" class="flex flex-col gap-4">
+
+                    <!-- Category Dropdown -->
+                    <div class="relative" id="ticket-category-wrapper">
+                        <button type="button" id="category-dropdown-btn" data-value="" onclick="toggleDropdown()" class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 flex justify-between items-center transition hover:border-indigo-500">
+                            <span id="selected-category-text" class="flex items-center gap-2">
+                                <i class="fa-solid fa-tag text-slate-500 text-xs"></i> Select category...
+                            </span>
+<i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+</button>
+<div id="category-options" class="absolute hidden z-20 w-full bg-slate-900 border border-slate-700 mt-1 rounded-xl shadow-2xl overflow-hidden">
+    
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('General','General')">
+        <i class="fa-solid fa-layer-group text-slate-400 text-xs w-4"></i> General
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Circular','Circular / Notice')">
+        <i class="fa-solid fa-bullhorn text-blue-400 text-xs w-4"></i> Circular / Notice
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Academic','Academic Query')">
+        <i class="fa-solid fa-book-open text-emerald-400 text-xs w-4"></i> Academic Query
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Exam','Exam and Results')">
+        <i class="fa-solid fa-file-pen text-purple-400 text-xs w-4"></i> Exam and Results
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Technical','Technical / Portal')">
+        <i class="fa-solid fa-desktop text-amber-400 text-xs w-4"></i> Technical / Portal
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Other','Other Issue')">
+        <i class="fa-solid fa-circle-question text-rose-400 text-xs w-4"></i> Other Issue
+    </div>
+
+</div>
+                    </div>
+
+                    <!-- Year Selector -->
+                    <div class="space-y-2">
+                        <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Study Year</label>
+                        <div class="flex gap-2 flex-wrap" id="year-selector">
+                            <button type="button" data-value="1st Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">1st</button>
+                            <button type="button" data-value="2nd Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">2nd</button>
+                            <button type="button" data-value="3rd Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">3rd</button>
+                            <button type="button" data-value="4th Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">4th</button>
+                        </div>
+                        <input type="hidden" id="ticket-year" value="">
+                    </div>
+
+                    <!-- Branch Selector -->
+<div class="space-y-2">
+    <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Branch</label>
+    <div class="grid grid-cols-2 gap-2" id="branch-selector">
+        
+        <button type="button" data-value="Computer" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-laptop-code text-blue-400"></i>
+            Computer
+        </button>
+
+        <button type="button" data-value="Civil" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-building text-amber-400"></i>
+            Civil
+        </button>
+
+        <button type="button" data-value="Mechanical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-gear text-gray-400"></i>
+            Mechanical
+        </button>
+
+        <button type="button" data-value="Electrical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-yellow-400"></i>
+            Electrical
+        </button>
+
+    </div>
+    <input type="hidden" id="ticket-branch" value="">
+</div>
+
+                    <input type="text" id="ticket-title" placeholder="Brief subject..." maxlength="120" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 transition">
+                    <textarea id="ticket-desc" rows="4" placeholder="Describe the issue in detail..." maxlength="1500" class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 resize-none transition"></textarea>
+
+                    <button type="button" id="btn-submit-ticket" onclick="submitTicket()" class="mt-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm px-5 py-3 shadow-lg flex justify-center items-center gap-2 transition active:scale-[0.98]">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Ticket
+                    </button>
+                    <button type="button" onclick="setCategory('Technical','Technical / Portal'); document.getElementById('ticket-title').focus();" class="text-xs text-rose-400 hover:text-rose-300 border border-slate-700 p-2.5 rounded-xl hover:bg-rose-500/10 flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-bug"></i> Report a Bug
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Feed -->
+        <div class="lg:col-span-3 flex flex-col" style="min-height:85vh;">
+            <div class="glass-card rounded-2xl flex flex-col overflow-hidden border border-slate-800 shadow-xl h-full">
+
+                <!-- Feed Header -->
+                <div class="p-5 border-b border-slate-800 bg-slate-950/60 flex flex-col gap-4 shrink-0">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <i class="fa-solid fa-ticket-simple"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-white text-base tracking-tight">Support Desk</h2>
+                                <p class="text-xs text-slate-500"><span id="ticket-count">0</span> tickets in queue</p>
+                            </div>
+                        </div>
+                        <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl w-full sm:w-auto">
+                            <button class="status-filter-btn active flex-1 sm:flex-none text-xs font-semibold px-3 py-1.5 rounded-lg transition" data-filter="all">All</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="open">Open</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="closed">Closed</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="mine">Mine</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 border-t border-slate-800 pt-4 overflow-x-auto pb-0.5">
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="tickets">Tickets</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="updates">Updates</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="dashboard">Dashboard</button>
+                        <button id="nav-admin-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="admin">Admin</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="resources">Resources</button>
+                        <button class="nav-tab-btn active text-xs font-medium px-3 py-1.5 rounded-lg transition whitespace-nowrap" data-view="about">About</button>
+                    </div>
+                </div>
+
+                <!-- Tickets View -->
+                <div id="view-tickets" class="hidden-safely flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4">
+                    <div id="loading-feed" class="text-center py-20 text-indigo-400">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                        <p class="text-sm font-medium text-slate-400">Connecting to database...</p>
+                    </div>
+                    <div id="tickets-list" class="flex flex-col gap-4"></div>
+                </div>
+
+                <!-- Updates View -->
+                <div id="view-updates" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="admin-post-box" class="hidden-safely mb-5 bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                        <p class="text-xs text-indigo-300 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-indigo-400"></i> Post Announcement
+                        </p>
+                        <textarea id="announcement-text" maxlength="800" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm p-3 rounded-lg resize-none mb-3" rows="3" placeholder="Write announcement..."></textarea>
+                        <button type="button" onclick="postAnnouncement()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Post Update
+                        </button>
+                    </div>
+                    <div id="updates-feed" class="space-y-4"></div>
+                </div>
+
+                <!-- Dashboard View -->
+                <div id="view-dashboard" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="dashboard-metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                </div>
+
+                <!-- Admin View -->
+                <div id="view-admin" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <h2 class="text-white font-bold text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-indigo-400"></i> Admin Control Center
+                    </h2>
+                    <div id="admin-controls"></div>
+                </div>
+<!-- Resources View -->
+<div id="view-resources" class="hidden-safely flex-1 overflow-y-auto p-5">
+    <h2 class="text-white font-bold text-base mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-folder-open text-amber-400"></i>
+        <i class="fa-solid fa-book-open text-indigo-400"></i>
+        Educational Resources
+    </h2>
+    <div id="resources-feed"></div>
+</div>
+                
+
+                <!-- About View -->
+                <div id="view-about" class="flex-1 overflow-y-auto p-5">
+                    <div class="max-w-2xl mx-auto p-6 bg-slate-900 border border-slate-700 rounded-2xl shadow-xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                <i class="fa-solid fa-ticket-simple text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-white">BIT Updates</h2>
+                                <p class="text-indigo-400 text-sm font-medium">Student Support Portal</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-slate-300 text-sm leading-relaxed mb-6">
+                            <p>A centralized platform designed to streamline student communication at BIT Wardha. Submit academic or technical queries, track resolution, and stay informed with timely campus notices.</p>
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Student notes and queries
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-file-lines text-blue-400"></i> Notices and circulars
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-book text-emerald-400"></i> Syllabus updates
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-graduation-cap text-purple-400"></i> Exam and results
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300 col-span-2">
+                                    <i class="fa-solid fa-clock text-amber-400"></i> Deadlines and academic information
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-900/20 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                            <p class="text-xs text-slate-400 leading-relaxed">This platform is independently developed and not officially affiliated with DBATU. For final academic decisions, rely on official university channels.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/919970182686?text=Hi%20BIT%20Updates,%20I%20have%20a%20student%20query." target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-40" aria-label="WhatsApp">
+    <div class="bg-emerald-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-xl shadow-emerald-600/40 hover:bg-emerald-500 transition pulse-btn">
+        <i class="fa-brands fa-whatsapp"></i>
+    </div>
+</a>
+
+<footer class="text-center p-8 text-slate-600 text-xs border-t border-slate-900 bg-slate-950">
+    <p>&copy; 2026 BIT Updates. All rights reserved.</p>
+    <p class="mt-1 text-slate-700">Not affiliated with DBATU. For informational purposes only.</p>
+    <div class="flex justify-center gap-6 mt-4 flex-wrap">
+        <a href="https://instagram.com/spotify.piux" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        <a href="https://linkedin.com/in/piyush-deshkar" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+        <a href="https://github.com/archiusx" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-github"></i> GitHub</a>
+        <a href="mailto:bitupdates@bitwardha.ac.in" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="terms-and-services.html" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-solid fa-file-contract"></i> Terms</a>
+    </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import {
+    getAuth, signInWithPopup, signInWithRedirect, getRedirectResult,
+    GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+    getFirestore, collection, addDoc, onSnapshot, serverTimestamp,
+    doc, updateDoc, getDoc, setDoc, arrayUnion, query,
+    orderBy, limit
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import {
+    getDatabase, ref as rtdbRef, push, onValue, update as rtdbUpdate,
+    remove as rtdbRemove, get as rtdbGet, query as rtdbQuery,
+    orderByChild as rtdbOrderByChild, limitToLast
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+// ── CONFIG ───────────────────────────────────────────────────────────
+const firebaseConfig = {
+    apiKey: "AIzaSyDAwty9lfGsj-hAf1QffMJLtvUfhdd_SPI",
+    authDomain: "loginx-897b3.firebaseapp.com",
+    databaseURL: "https://loginx-897b3-default-rtdb.firebaseio.com",
+    projectId: "loginx-897b3",
+    storageBucket: "loginx-897b3.firebasestorage.app",
+    messagingSenderId: "380291415413",
+    appId: "1:380291415413:web:6d222db905e4457e29e73c",
+    measurementId: "G-BM6PMDKN5V"
+};
+
+const ADMIN_EMAILS = ["co.2024.prdeshkar@bitwardha.ac.in", "class11art@gmail.com"];
+const TICKETS_COLLECTION = "support_tickets";
+const ANNOUNCEMENTS_COLLECTION = "public_announcements";
+const USERS_COLLECTION = "users";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const rtdb = getDatabase(app);
+
+// ── STATE ────────────────────────────────────────────────────────────
+let currentUser   = null;
+let userCache     = {};
+let isAdmin       = false;
+let allTickets    = [];
+let allUpdates    = [];
+let currentStatusFilter = 'all';
+let currentView   = 'about';
+let editTicketId  = null;
+let unsubTickets  = null;
+let unsubAnnounce = null;
+let assignCallback = null;
+let ticketsReady  = false; // true after first RTDB snapshot
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function escHTML(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]||t));
+}
+function timeAgo(ts) {
+    if (!ts) return 'just now';
+    const s = Math.floor((Date.now() - (ts.toMillis ? ts.toMillis() : ts)) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+}
+function catColor(cat) {
+    const m = {
+        Academic: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+        Exam:     'bg-purple-500/20 text-purple-400 border-purple-500/30',
+        Technical:'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        Circular: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        General:  'bg-slate-700/60 text-slate-300 border-slate-600',
+        Other:    'bg-rose-500/20 text-rose-400 border-rose-500/30'
+    };
+    return m[cat] || 'bg-slate-700/60 text-slate-300 border-slate-600';
+}
+function catIcon(cat) {
+    const m = {
+        Academic:'fa-book', Exam:'fa-graduation-cap', Technical:'fa-wrench',
+        Circular:'fa-file-lines', General:'fa-circle-dot', Other:'fa-triangle-exclamation'
+    };
+    return m[cat] || 'fa-tag';
+}
+function statusColor(s) {
+    return s === 'closed'
+        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+        : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────
+window.showToast = function(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const colors = { success:'bg-slate-800 border-slate-700', error:'bg-rose-900/80 border-rose-500/50', info:'bg-indigo-900/80 border-indigo-500/50' };
+    const icons  = { success:'fa-check-circle text-emerald-400', error:'fa-circle-exclamation text-rose-400', info:'fa-circle-info text-indigo-400' };
+    toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border pointer-events-auto transform transition-all duration-300 translate-y-4 opacity-0 ${colors[type]||colors.success}`;
+    toast.innerHTML = `<i class="fa-solid ${icons[type]||icons.success} shrink-0"></i><p class="text-sm font-medium text-slate-200 leading-tight">${escHTML(message)}</p>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.remove('translate-y-4','opacity-0'));
+    setTimeout(() => { toast.classList.add('translate-y-4','opacity-0'); setTimeout(() => toast.remove(), 350); }, 4000);
+};
+
+// ── CONFIRM ───────────────────────────────────────────────────────────
+window.showConfirm = function(title, msg, onConfirm) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-msg').textContent   = msg;
+    const dialog = document.getElementById('confirm-dialog');
+    dialog.classList.remove('hidden-safely');
+    const ok  = document.getElementById('confirm-ok');
+    const can = document.getElementById('confirm-cancel');
+    const cls = () => dialog.classList.add('hidden-safely');
+    ok.onclick  = () => { cls(); onConfirm(); };
+    can.onclick = cls;
+};
+
+// ── ASSIGN MODAL ──────────────────────────────────────────────────────
+window.closeAssignModal = function() {
+    document.getElementById('assign-modal').classList.add('hidden-safely');
+    document.getElementById('assign-modal-input').value = '';
+    assignCallback = null;
+};
+function openAssignModal(label, cb) {
+    document.getElementById('assign-modal-target').textContent = label;
+    document.getElementById('assign-modal-input').value = '';
+    document.getElementById('assign-modal').classList.remove('hidden-safely');
+    assignCallback = cb;
+    document.getElementById('assign-modal-input').focus();
+}
+document.getElementById('assign-modal-submit').onclick = function() {
+    const val = document.getElementById('assign-modal-input').value.trim();
+    if (assignCallback) assignCallback(val);
+    closeAssignModal();
+};
+
+// ── AUTH ──────────────────────────────────────────────────────────────
+function setLoginBtnState(loading) {
+    const gBtn = document.getElementById('btn-google-signin');
+    const aBtn = document.getElementById('btn-anon-signin');
+    gBtn.disabled = aBtn.disabled = loading;
+    gBtn.innerHTML = loading
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> <span>Authenticating...</span>'
+        : '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google"> <span>Sign in with Google</span>';
+}
+
+document.getElementById('btn-google-signin').onclick = async function() {
+    setLoginBtnState(true);
+    document.getElementById('login-error').classList.add('hidden-safely');
+    try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (e) {
+        if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+            try { await signInWithRedirect(auth, new GoogleAuthProvider()); }
+            catch(e2) { showLoginError(e2.message); setLoginBtnState(false); }
+        } else { showLoginError(e.message||'Sign-in failed.'); setLoginBtnState(false); }
+    }
+};
+document.getElementById('btn-anon-signin').onclick = async function() {
+    setLoginBtnState(true);
+    document.getElementById('login-error').classList.add('hidden-safely');
+    try { await signInAnonymously(auth); }
+    catch(e) { showLoginError('Guest sign-in failed. '+e.message); setLoginBtnState(false); }
+};
+document.getElementById('btn-logout-modal').onclick = () => signOut(auth);
+getRedirectResult(auth).catch(e => console.warn('Redirect:', e));
+
+function showLoginError(msg) {
+    const el = document.getElementById('login-error');
+    el.textContent = msg;
+    el.classList.remove('hidden-safely');
+}
+
+// ── AUTH STATE ────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+        const email = (user.email||'').toLowerCase().trim();
+        isAdmin = ADMIN_EMAILS.includes(email);
+
+        document.getElementById('login-screen').classList.add('hidden-safely');
+        document.getElementById('main-app').classList.remove('hidden-safely');
+        document.getElementById('user-name').textContent = user.displayName || 'Student';
+
+        if (isAdmin) {
+            document.getElementById('admin-badge').classList.remove('hidden-safely');
+            document.getElementById('admin-profile-badge').classList.remove('hidden-safely');
+            document.getElementById('nav-admin-btn').classList.remove('hidden-safely');
+            document.getElementById('admin-post-box').classList.remove('hidden-safely');
+            showToast('Administrator access granted.', 'info');
+            // Re-render after admin flag confirmed to show admin actions on ticket cards
+            setTimeout(() => {
+                if (currentView === 'tickets') renderTickets();
+                else if (currentView === 'admin') renderAdminView();
+            }, 400);
+        } else {
+            showToast(`Welcome, ${user.displayName || 'Student'}!`);
+        }
+
+        await loadUserData(user.uid);
+        startListeners();
+        switchView('about');
+    } else {
+        currentUser = null; isAdmin = false; userCache = {};
+        allTickets = []; allUpdates = []; ticketsReady = false;
+        document.getElementById('login-screen').classList.remove('hidden-safely');
+        document.getElementById('main-app').classList.add('hidden-safely');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+        document.getElementById('admin-badge').classList.add('hidden-safely');
+        document.getElementById('admin-profile-badge').classList.add('hidden-safely');
+        document.getElementById('nav-admin-btn').classList.add('hidden-safely');
+        if (unsubTickets)  { unsubTickets();  unsubTickets  = null; }
+        if (unsubAnnounce) { unsubAnnounce(); unsubAnnounce = null; }
+        setLoginBtnState(false);
+    }
+});
+
+// ── LOAD USER PROFILE ─────────────────────────────────────────────────
+// FIX: localStorage-first for instant load + permanent persistence
+async function loadUserData(uid) {
+    try {
+        const cached = localStorage.getItem('bitup_profile_' + uid);
+        if (cached) {
+            userCache = JSON.parse(cached);
+            if (userCache.displayName) document.getElementById('user-name').textContent = userCache.displayName;
+        }
+    } catch(e) {}
+    try {
+        const snap = await getDoc(doc(db, USERS_COLLECTION, uid));
+        if (snap.exists()) {
+            userCache = { ...userCache, ...snap.data() };
+            if (userCache.displayName) document.getElementById('user-name').textContent = userCache.displayName;
+            localStorage.setItem('bitup_profile_' + uid, JSON.stringify(userCache));
+        }
+    } catch(e) { console.warn('Profile sync error:', e); }
+}
+
+// ── PROFILE MODAL ─────────────────────────────────────────────────────
+document.getElementById('btn-menu').onclick = () => {
+    document.getElementById('prof-name').value   = userCache.displayName || currentUser?.displayName || '';
+    document.getElementById('prof-prn').value    = userCache.prn || '';
+    document.getElementById('prof-branch').value = userCache.branch || '';
+    document.getElementById('prof-sem').value    = userCache.semester || '';
+    document.getElementById('profile-modal').classList.remove('hidden-safely');
+};
+document.getElementById('btn-close-modal').onclick = () =>
+    document.getElementById('profile-modal').classList.add('hidden-safely');
+
+// FIX: Save profile — localStorage + Firestore, fix stuck "Saving..." button
+document.getElementById('btn-save-profile').onclick = async function() {
+    if (!currentUser) return;
+    const name = document.getElementById('prof-name').value.trim();
+    if (!name) { showToast('Name cannot be empty.', 'error'); return; }
+
+    const btn = this;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+    btn.disabled  = true;
+
+    const data = {
+        uid:         currentUser.uid,
+        displayName: name,
+        prn:         document.getElementById('prof-prn').value.trim(),
+        branch:      document.getElementById('prof-branch').value.trim().toUpperCase(),
+        semester:    document.getElementById('prof-sem').value,
+        updatedAt:   serverTimestamp()
+    };
+
+    // FIX: Save to localStorage immediately so it persists regardless of Firestore result
+    const localData = { ...data };
+    delete localData.updatedAt; // serverTimestamp can't be serialized
+    userCache = { ...userCache, ...localData };
+    localStorage.setItem('bitup_profile_' + currentUser.uid, JSON.stringify(userCache));
+    document.getElementById('user-name').textContent = name;
+
+    try {
+        await setDoc(doc(db, USERS_COLLECTION, currentUser.uid), data, { merge: true });
+        showToast('Profile saved successfully.');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+    } catch(e) {
+        showToast('Saved locally. Firestore sync failed: ' + e.message, 'info');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+    }
+
+    btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Save Profile';
+    btn.disabled  = false;
+};
+
+// ── REALTIME LISTENERS ────────────────────────────────────────────────
+function startListeners() {
+    const tq = rtdbQuery(rtdbRef(rtdb, TICKETS_COLLECTION), rtdbOrderByChild('createdAtMs'), limitToLast(200));
+    unsubTickets = onValue(tq, snap => {
+        const rows = snap.val() || {};
+        allTickets = Object.entries(rows).map(([id, data]) => ({ id, ...data }))
+            .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+        ticketsReady = true; // ← data has arrived
+        if (currentView === 'tickets')   renderTickets();
+        if (currentView === 'dashboard') renderDashboard();
+        if (currentView === 'admin')     renderAdminView();
+        updateTicketCount();
+    }, err => {
+        console.error('Tickets error:', err);
+        document.getElementById('loading-feed').innerHTML =
+            `<div class="text-rose-400 text-center py-10 text-sm"><i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i><p>${escHTML(err.message)}</p></div>`;
+        document.getElementById('loading-feed').classList.remove('hidden-safely');
+    });
+
+    const aq = query(collection(db, ANNOUNCEMENTS_COLLECTION), orderBy('createdAt','desc'), limit(50));
+    unsubAnnounce = onSnapshot(aq, snap => {
+        allUpdates = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (currentView === 'updates') renderUpdatesView();
+    });
+}
+
+// ── VIEW SWITCHING ────────────────────────────────────────────────────
+document.querySelectorAll('.nav-tab-btn').forEach(btn =>
+    btn.addEventListener('click', () => switchView(btn.dataset.view))
+);
+function switchView(view) {
+    currentView = view;
+    ['tickets','updates','dashboard','admin','resources','about'].forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden-safely', v !== view);
+    });
+    document.querySelectorAll('.nav-tab-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.view === view)
+    );
+    if (view === 'tickets')   renderTickets();
+    if (view === 'dashboard') renderDashboard();
+    if (view === 'admin')     renderAdminView();
+    if (view === 'updates')   renderUpdatesView();
+    if (view === 'resources') renderResourcesView();
+}
+
+document.querySelectorAll('.status-filter-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+        currentStatusFilter = btn.dataset.filter;
+        document.querySelectorAll('.status-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (currentView !== 'tickets') switchView('tickets');
+        else renderTickets();
+    })
+);
+
+function updateTicketCount() {
+    document.getElementById('ticket-count').textContent = filterTicketList().length;
+}
+function filterTicketList() {
+    if (currentStatusFilter === 'open')   return allTickets.filter(t => (t.status||'open') === 'open');
+    if (currentStatusFilter === 'closed') return allTickets.filter(t => t.status === 'closed');
+    if (currentStatusFilter === 'mine')   return allTickets.filter(t => t.authorId === currentUser?.uid);
+    return allTickets;
+}
+
+// ── RENDER TICKETS ────────────────────────────────────────────────────
+function renderTickets() {
+    const loadingEl = document.getElementById('loading-feed');
+    const list      = document.getElementById('tickets-list');
+
+    // Data hasn't arrived from RTDB yet — keep spinner visible
+    if (!ticketsReady) {
+        loadingEl.classList.remove('hidden-safely');
+        list.innerHTML = '';
+        document.getElementById('ticket-count').textContent = '…';
+        return;
+    }
+
+    loadingEl.classList.add('hidden-safely');
+    const tickets = filterTicketList();
+    document.getElementById('ticket-count').textContent = tickets.length;
+
+    if (!tickets.length) {
+        list.innerHTML = `<div class="text-center p-10 bg-slate-900/60 border border-slate-800 rounded-2xl">
+            <i class="fa-solid fa-inbox text-3xl text-slate-600 mb-3"></i>
+            <h3 class="text-white font-bold mb-1">No tickets found</h3>
+            <p class="text-sm text-slate-500">Queue is empty for this filter.</p>
+        </div>`;
+        return;
+    }
+    list.innerHTML = tickets.map(t => buildTicketCard(t)).join('');
+}
+
+function buildTicketCard(t) {
+    const isMine  = currentUser?.uid === t.authorId;
+    const status  = t.status || 'open';
+    const avatar  = t.authorPhoto
+        ? `<img src="${escHTML(t.authorPhoto)}" class="w-10 h-10 rounded-xl object-cover border border-slate-700" alt="avatar">`
+        : `<div class="w-10 h-10 rounded-xl bg-indigo-600/80 text-white flex items-center justify-center font-bold text-sm">${escHTML((t.authorName||'S')[0].toUpperCase())}</div>`;
+
+    const byLine = escHTML(t.authorName||'Unknown') +
+        (t.authorPRN ? ` <span class="font-mono text-[10px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded ml-1">${escHTML(t.authorPRN)}</span>` : '');
+    const assignedBadge = t.assignedTo
+        ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-300 px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-user-check text-indigo-400 text-[9px]"></i> ${escHTML(t.assignedTo)}</span>`
+        : '';
+
+    // Admin reply block
+    let replyHTML = '';
+
+// ✅ Normalize comments (Firebase object → array)
+let commentsArr = [];
+if (t.comments) {
+    commentsArr = Object.values(t.comments);
+}
+
+// ✅ Separate admin + user comments
+const adminReplies = commentsArr.filter(c => c.isAdmin);
+const userComments = commentsArr.filter(c => !c.isAdmin);
+
+// 🔹 Admin Replies (highlighted)
+adminReplies.forEach(c => {
+    replyHTML += `<div class="mt-4 bg-indigo-950/50 border border-indigo-800/50 p-4 rounded-xl relative">
+        <div class="absolute left-0 top-0 w-1 h-full bg-indigo-500 rounded-l-xl"></div>
+        <div class="flex items-center gap-2 mb-2 ml-3">
+            <i class="fa-solid fa-shield-check text-indigo-400 text-xs"></i>
+            <span class="text-[10px] font-extrabold text-indigo-300 uppercase tracking-widest">Admin Response</span>
+        </div>
+        <p class="text-sm text-slate-200 leading-relaxed ml-3 whitespace-pre-wrap">${escHTML(c.text)}</p>
+    </div>`;
+});
+
+// 🔹 User Comments
+userComments.forEach(c => {
+    replyHTML += `<div class="mt-3 bg-slate-800/60 border border-slate-700 p-3 rounded-xl">
+        <div class="text-[10px] font-semibold text-slate-400 mb-1 flex items-center gap-1">
+            <i class="fa-regular fa-comment-dots"></i> ${escHTML(c.authorName || "User")}
+        </div>
+        <p class="text-xs text-slate-300 whitespace-pre-wrap">${escHTML(c.text)}</p>
+    </div>`;
+});
+
+
+// ================= ACTIONS =================
+
+let adminActions = '';
+let inputArea = '';
+
+if (isAdmin) {
+    const toggleLabel = status === 'open' ? 'Mark Resolved' : 'Re-open';
+    const toggleIcon  = status === 'open' ? 'fa-check' : 'fa-rotate-left';
+    const newStatus   = status === 'open' ? 'closed' : 'open';
+
+    adminActions = `<div class="flex gap-2 flex-wrap">
+        <button onclick="updateTicketStatus('${t.id}','${newStatus}')" class="text-[10px] bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-400 hover:text-indigo-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold">
+            <i class="fa-solid ${toggleIcon}"></i> ${escHTML(toggleLabel)}
+        </button>
+
+        <button onclick="assignTicket('${t.id}')" class="text-[10px] bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-400 hover:text-indigo-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold">
+            <i class="fa-solid fa-user-plus"></i> Assign
+        </button>
+
+        <button onclick="deleteTicket('${t.id}')" class="text-[10px] bg-slate-900 border border-rose-500/30 hover:bg-rose-500/20 text-rose-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+    </div>`;
+
+    // ✅ FIXED INPUT (goes to comments node)
+    inputArea = `<div class="mt-4 pt-3 border-t border-slate-800 flex gap-2 items-center bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-2xl">
+        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px] shrink-0">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <input type="text" id="reply-input-${t.id}" maxlength="600" placeholder="Write official response..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+        <button onclick="sendAdminReply('${t.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shrink-0">
+            <i class="fa-solid fa-paper-plane mr-1"></i>Send
+        </button>
+    </div>`;
+}
+
+// 👤 Owner (no reply access)
+else if (isMine) {
+    adminActions = `<div class="flex gap-2">
+        <button onclick="editTicket('${t.id}')" class="text-[10px] bg-slate-800 border border-slate-700 hover:border-amber-500/50 text-slate-400 hover:text-amber-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-pen"></i> Edit
+        </button>
+
+        <button onclick="deleteTicket('${t.id}')" class="text-[10px] bg-slate-800 border border-slate-700 hover:border-rose-500/50 text-slate-400 hover:text-rose-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-trash"></i> Remove
+        </button>
+    </div>`;
+    }
+    // Non-owner, non-admin: no actions, no input area at all
+
+    return `<div class="ticket-card bg-slate-900 p-5 rounded-2xl border border-slate-800 ${status === 'closed' ? 'opacity-70' : ''}">
+        <div class="flex gap-3 mb-3">
+            ${avatar}
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-3">
+                    <h3 class="font-bold text-white text-sm leading-snug" title="${escHTML(t.title)}">${escHTML(t.title)}</h3>
+                    <span class="text-[9px] font-bold ${statusColor(status)} border px-2 py-0.5 rounded-full uppercase tracking-wide shrink-0">${escHTML(status)}</span>
+                </div>
+                <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="text-[10px] font-semibold ${catColor(t.category)} border px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <i class="fa-solid ${catIcon(t.category)} text-[9px]"></i> ${escHTML(t.category||'General')}
+                    </span>
+                    ${t.year ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-indigo-400 text-[9px]"></i>${escHTML(t.year)}</span>` : ''}
+                    ${t.branch ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-md">${escHTML(t.branch)}</span>` : ''}
+                    ${assignedBadge}
+                    <span class="text-[10px] text-slate-600 border-l border-slate-800 pl-2 flex items-center gap-1"><i class="fa-regular fa-clock"></i>${timeAgo(t.createdAt)}</span>
+                </div>
+            </div>
+        </div>
+        <p class="text-sm text-slate-400 bg-slate-800/40 p-3.5 rounded-xl border border-slate-800 leading-relaxed whitespace-pre-wrap">${escHTML(t.description)}</p>
+        ${replyHTML}
+        <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3">
+            <div class="text-[11px] text-slate-600 flex items-center gap-1">
+                <i class="fa-solid fa-satellite-dish text-slate-700 text-[10px]"></i>
+                Logged by <span class="font-semibold text-slate-400 ml-1">${byLine}</span>
+                ${isMine ? '<span class="text-indigo-400 font-bold bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[9px] uppercase ml-2">You</span>' : ''}
+            </div>
+            ${adminActions}
+        </div>
+        ${inputArea}
+    </div>`;
+}
+
+// ── SUBMIT TICKET ─────────────────────────────────────────────────────
+window.submitTicket = async function() {
+    if (!currentUser) { showToast('Please sign in first.', 'error'); return; }
+    const category = document.getElementById('category-dropdown-btn').dataset.value;
+    const year     = document.getElementById('ticket-year').value;
+    const branch   = document.getElementById('ticket-branch').value;
+    const title    = document.getElementById('ticket-title').value.trim();
+    const desc     = document.getElementById('ticket-desc').value.trim();
+
+    if (!category) { showToast('Please select a category.', 'error'); return; }
+    if (!year)     { showToast('Please select a study year.', 'error'); return; }
+    if (!branch)   { showToast('Please select a branch.', 'error'); return; }
+    if (!title)    { showToast('Please enter a subject.', 'error'); return; }
+    if (!desc)     { showToast('Please describe the issue.', 'error'); return; }
+
+    const btn = document.getElementById('btn-submit-ticket');
+    const isEditing = !!editTicketId;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing...';
+    btn.disabled  = true;
+
+    const payload = { category, year, branch, title, description: desc };
+
+    try {
+        if (isEditing) {
+            const ticketRef = rtdbRef(rtdb, `${TICKETS_COLLECTION}/${editTicketId}`);
+            const snap = await rtdbGet(ticketRef);
+            const ticketData = snap.val();
+            // Extra client-side guard: only allow edit if owned
+            if (!snap.exists() || (ticketData.authorId !== currentUser.uid && !isAdmin)) {
+                showToast('Permission denied.', 'error');
+                btn.innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Update Ticket';
+                btn.disabled = false;
+                return;
+            }
+            await rtdbUpdate(ticketRef, { ...payload, updatedAtMs: Date.now() });
+            showToast('Ticket updated.');
+            editTicketId = null;
+            document.getElementById('form-title').textContent = 'Raise a Ticket';
+        } else {
+            await push(rtdbRef(rtdb, TICKETS_COLLECTION), {
+                ...payload,
+                authorId:    currentUser.uid,
+                authorName:  userCache.displayName || currentUser.displayName || 'Student',
+                authorPRN:   userCache.prn || null,
+                authorPhoto: currentUser.photoURL || null,
+                status:      'open',
+                createdAt:   Date.now(),
+                createdAtMs: Date.now()
+            });
+            showToast('Ticket submitted successfully.');
+        }
+        resetForm();
+        currentStatusFilter = 'all';
+        document.querySelectorAll('.status-filter-btn').forEach(b =>
+            b.classList.toggle('active', b.dataset.filter === 'all')
+        );
+        switchView('tickets');
+    } catch(e) {
+        console.error(e);
+        showToast('Failed: ' + e.message, 'error');
+    }
+    btn.innerHTML = isEditing
+        ? '<i class="fa-solid fa-pen mr-1"></i> Update Ticket'
+        : '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+    btn.disabled = false;
+};
+
+function resetForm() {
+    document.getElementById('ticket-year').value    = '';
+    document.getElementById('ticket-branch').value  = '';
+    document.getElementById('ticket-title').value   = '';
+    document.getElementById('ticket-desc').value    = '';
+    document.getElementById('category-dropdown-btn').dataset.value = '';
+    document.getElementById('selected-category-text').innerHTML = '<i class="fa-solid fa-tag text-slate-500 text-xs"></i> Select category...';
+    document.querySelectorAll('#year-selector button, #branch-selector button').forEach(b => {
+        b.classList.remove('bg-indigo-600','text-white','border-indigo-500');
+        b.classList.add('bg-slate-800','text-slate-300','border-slate-700');
+    });
+    editTicketId = null;
+    document.getElementById('form-title').textContent = 'Raise a Ticket';
+    document.getElementById('btn-submit-ticket').innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+}
+
+// ── TICKET ACTIONS ────────────────────────────────────────────────────
+
+// ✅ ADMIN REPLY (FIXED - uses comments instead of adminReply field)
+window.sendAdminReply = async function(ticketId) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    const input = document.getElementById(`reply-input-${ticketId}`);
+    const text = input?.value.trim();
+
+    if (!text) { 
+        showToast('Response cannot be empty.', 'error'); 
+        return; 
+    }
+
+    input.disabled = true;
+
+    try {
+        // 🔥 Push reply into comments node (correct way)
+        await push(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}/comments`),
+            {
+                text: text,
+                authorId: auth.currentUser.uid,
+                authorName: auth.currentUser.displayName || "Admin",
+                isAdmin: true,
+                createdAt: Date.now()
+            }
+        );
+
+        // ✅ Update ticket status separately
+        await rtdbUpdate(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+            {
+                status: 'closed',
+                repliedAtMs: Date.now(),
+                updatedAtMs: Date.now()
+            }
+        );
+
+        showToast('Response posted and ticket resolved.');
+        input.value = '';
+
+    } catch(e) { 
+        showToast('Failed: ' + e.message, 'error'); 
+    }
+
+    input.disabled = false;
+};
+
+
+// ✅ UPDATE STATUS
+window.updateTicketStatus = async function(ticketId, newStatus) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    try {
+        await rtdbUpdate(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+            { 
+                status: newStatus, 
+                updatedAtMs: Date.now() 
+            }
+        );
+
+        showToast(`Ticket marked as ${newStatus}.`);
+
+    } catch(e) { 
+        showToast('Failed: ' + e.message, 'error'); 
+    }
+};
+
+
+// ✅ ASSIGN TICKET
+window.assignTicket = function(ticketId) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    openAssignModal('Assign ticket to:', async (name) => {
+        try {
+            await rtdbUpdate(
+                rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+                { 
+                    assignedTo: name || null, 
+                    updatedAtMs: Date.now() 
+                }
+            );
+
+            showToast(name ? `Assigned to ${name}.` : 'Assignment cleared.');
+
+        } catch(e) { 
+            showToast('Failed: ' + e.message, 'error'); 
+        }
+    });
+};
+
+// FIX: deleteTicket — only admin or ticket owner can delete
+window.deleteTicket = function(ticketId) {
+    const ticket = allTickets.find(x => x.id === ticketId);
+    if (!ticket) return;
+    if (!isAdmin && ticket.authorId !== currentUser?.uid) {
+        showToast('You can only delete your own tickets.', 'error'); return;
+    }
+    showConfirm('Delete Ticket', 'This will permanently remove this ticket.', async () => {
+        try {
+            await rtdbRemove(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`));
+            showToast('Ticket deleted.');
+        } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
+};
+
+window.editTicket = function(ticketId) {
+    const t = allTickets.find(x => x.id === ticketId);
+    if (!t) return;
+    // FIX: Only owner or admin can edit
+    if (!isAdmin && t.authorId !== currentUser?.uid) { showToast('Permission denied.', 'error'); return; }
+    editTicketId = ticketId;
+    setCategory(t.category, t.category);
+    document.getElementById('ticket-title').value = t.title || '';
+    document.getElementById('ticket-desc').value  = t.description || '';
+    document.querySelectorAll('#year-selector button').forEach(b => {
+        const a = b.dataset.value === t.year;
+        b.classList.toggle('bg-indigo-600', a); b.classList.toggle('text-white', a);
+        b.classList.toggle('bg-slate-800', !a); b.classList.toggle('text-slate-300', !a);
+        if (a) document.getElementById('ticket-year').value = t.year;
+    });
+    document.querySelectorAll('#branch-selector button').forEach(b => {
+        const a = b.dataset.value === t.branch;
+        b.classList.toggle('bg-indigo-600', a); b.classList.toggle('text-white', a);
+        b.classList.toggle('bg-slate-800', !a); b.classList.toggle('text-slate-300', !a);
+        if (a) document.getElementById('ticket-branch').value = t.branch;
+    });
+    document.getElementById('form-title').textContent = 'Edit Ticket';
+    document.getElementById('btn-submit-ticket').innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Update Ticket';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    switchView('tickets');
+};
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────
+function renderDashboard() {
+    const container = document.getElementById('dashboard-metrics');
+    const open   = allTickets.filter(t => (t.status||'open') === 'open').length;
+    const closed = allTickets.filter(t => t.status === 'closed').length;
+    const catCounts = allTickets.reduce((a, t) => { a[t.category] = (a[t.category]||0)+1; return a; }, {});
+    const topCat = Object.keys(catCounts).sort((a,b) => catCounts[b]-catCounts[a])[0] || 'N/A';
+    let totalRes = 0, resCount = 0;
+    allTickets.forEach(t => {
+        if (t.status === 'closed' && t.createdAt && t.repliedAt) {
+            totalRes += (t.repliedAt.toMillis() - t.createdAt.toMillis());
+            resCount++;
+        }
+    });
+    const avgHrs = resCount > 0 ? (totalRes / resCount / 3600000).toFixed(1) : '—';
+
+    container.innerHTML = `
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-folder-open text-amber-400"></i> Open</div>
+            <div class="text-4xl font-bold text-white mt-2">${open}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Resolved</div>
+            <div class="text-4xl font-bold text-white mt-2">${closed}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-400"></i> Avg Resolution (hrs)</div>
+            <div class="text-4xl font-bold text-white mt-2">${avgHrs}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-purple-400"></i> Top Category</div>
+            <div class="text-xl font-bold text-white mt-2 truncate">${escHTML(topCat)}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl col-span-full mt-2">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-4">Ticket Distribution by Category</div>
+            <div id="neon-graph" class="w-full" style="height:220px;"></div>
+        </div>`;
+    requestAnimationFrame(() => setTimeout(() => renderD3Graph(catCounts), 50));
+}
+
+function renderD3Graph(data) {
+    const container = document.getElementById('neon-graph');
+    if (!container) return;
+    container.innerHTML = '';
+    const W = container.clientWidth || 500, H = 200;
+    const keys = Object.keys(data), vals = Object.values(data);
+    if (!keys.length) { container.innerHTML = '<p class="text-slate-500 text-sm text-center pt-10">No ticket data yet.</p>'; return; }
+    const svg  = d3.select('#neon-graph').append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet');
+    const defs = svg.append('defs');
+    const filt = defs.append('filter').attr('id','glow2');
+    filt.append('feGaussianBlur').attr('stdDeviation','3').attr('result','blur');
+    const mrg = filt.append('feMerge'); mrg.append('feMergeNode').attr('in','blur'); mrg.append('feMergeNode').attr('in','SourceGraphic');
+    const m = { top:20, right:20, bottom:40, left:30 };
+    const x = d3.scaleBand().domain(keys).range([m.left,W-m.right]).padding(0.4);
+    const y = d3.scaleLinear().domain([0,d3.max(vals)||1]).range([H-m.bottom,m.top]);
+    svg.append('g').attr('transform',`translate(0,${H-m.bottom})`).call(d3.axisBottom(x))
+        .selectAll('text').attr('fill','#64748b').attr('font-size','10px').attr('font-family','DM Sans');
+    svg.selectAll('.domain,.tick line').attr('stroke','#1e293b');
+    const g = defs.append('linearGradient').attr('id','bg2').attr('x1','0').attr('x2','0').attr('y1','0').attr('y2','1');
+    g.append('stop').attr('offset','0%').attr('stop-color','#818cf8');
+    g.append('stop').attr('offset','100%').attr('stop-color','#4f46e5');
+    svg.selectAll('rect').data(keys).enter().append('rect')
+        .attr('x',d=>x(d)).attr('y',d=>y(data[d]))
+        .attr('width',x.bandwidth()).attr('height',d=>H-m.bottom-y(data[d]))
+        .attr('fill','url(#bg2)').attr('filter','url(#glow2)').attr('rx',4);
+    svg.selectAll('.lbl').data(keys).enter().append('text')
+        .attr('x',d=>x(d)+x.bandwidth()/2).attr('y',d=>y(data[d])-5)
+        .attr('text-anchor','middle').attr('fill','#a5b4fc').attr('font-size','11px').attr('font-family','DM Sans')
+        .text(d=>data[d]);
+}
+
+// ── ADMIN VIEW ────────────────────────────────────────────────────────
+function renderAdminView() {
+    if (!isAdmin) return;
+    const container = document.getElementById('admin-controls');
+    const users = [...new Set(allTickets.map(t => t.authorId||'anon'))];
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-ticket text-indigo-400"></i> All Tickets (${allTickets.length})
+                </h3>
+                <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                    ${allTickets.map(t => `<div class="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800 gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm text-slate-300 truncate font-medium">${escHTML(t.title)}</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">${escHTML(t.authorName||'')} &middot; <span class="${t.status==='closed'?'text-emerald-400':'text-amber-400'}">${t.status||'open'}</span></p>
+                        </div>
+                        <button onclick="deleteTicket('${t.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 shrink-0 transition">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>`).join('')}
+                </div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-users text-indigo-400"></i> Participation
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Unique users</span>
+                        <span class="font-bold text-white">${users.length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Total tickets</span>
+                        <span class="font-bold text-white">${allTickets.length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Open tickets</span>
+                        <span class="font-bold text-amber-400">${allTickets.filter(t=>(t.status||'open')==='open').length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Resolved</span>
+                        <span class="font-bold text-emerald-400">${allTickets.filter(t=>t.status==='closed').length}</span>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-500 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+                    Admin: co.2024.prdeshkar@bitwardha.ac.in
+                </div>
+            </div>
+        </div>`;
+}
+
+// ── UPDATES ───────────────────────────────────────────────────────────
+function renderUpdatesView() {
+    const feed = document.getElementById('updates-feed');
+    if (!allUpdates.length) {
+        feed.innerHTML = '<p class="text-slate-500 text-center py-10 text-sm">No public updates yet.</p>';
+        return;
+    }
+    feed.innerHTML = allUpdates.map(u => `
+        <div class="glass-card p-4 rounded-xl border border-slate-700">
+            <p class="text-slate-200 text-sm leading-relaxed">${escHTML(u.text)}</p>
+            <div class="flex justify-between items-center mt-3">
+                <span class="text-[10px] text-slate-500 flex items-center gap-1">
+                    <i class="fa-solid fa-user-shield text-indigo-400"></i> ${escHTML(u.authorName||'Admin')} &middot; ${timeAgo(u.createdAt)}
+                </span>
+            </div>
+        </div>`).join('');
+}
+
+window.postAnnouncement = async function() {
+    if (!isAdmin) { showToast('Admin only.', 'error'); return; }
+    const text = document.getElementById('announcement-text').value.trim();
+    if (!text) { showToast('Cannot post empty announcement.', 'error'); return; }
+    try {
+        await addDoc(collection(db, ANNOUNCEMENTS_COLLECTION), {
+            text,
+            authorName: userCache.displayName || 'Admin',
+            createdAt:  serverTimestamp()
+        });
+        document.getElementById('announcement-text').value = '';
+        showToast('Announcement posted.');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+// ── RESOURCES ─────────────────────────────────────────────────────────
+let selectedCategory = "First Year (FY)";
+    const RESOURCES = {
+    "First Year (FY)": [
+        {
+            title: "FY PYQ (All Subjects) - Set 1",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/14-MjWjZStCQhwGOWpprH8Sc44GrlX_cE"
+        },
+        {
+            title: "FY PYQ (All Subjects) - Set 2",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1bpFzsgC0Ri0zVgg6yEVJ6JqC9BazlMiP"
+        }
+    ],
+
+    "Second Year (SY)": [
+        {
+            title: "BTech SY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1MRgDb89eTYvRHOIh1RQrClZORIJ1134l"
+        }
+    ],
+
+    "Third Year (TY)": [
+        {
+            title: "BTech TY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1Nhn4DwiE8ztVt_-QoOrkTDrSUq4b_DA-"
+        }
+    ],
+
+    "Final Year": [
+        {
+            title: "BTech Final Year PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1EPQ-g1d0dlmryhTNMplAmDHRYemoGH6E"
+        }
+    ]
+};
+window.renderResourcesView = function(branch = "First Year (FY)") {
+    const feed = document.getElementById('resources-feed');
+    const tabs = Object.keys(RESOURCES).map(b => `
+        <button onclick="renderResourcesView('${b}')" class="px-4 py-2 rounded-xl text-sm font-medium transition ${b===branch?'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20':'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'}">${b}</button>`
+    ).join('');
+    const items = (RESOURCES[branch]||[]).map(r => `
+        <div class="glass-card p-4 rounded-xl border border-slate-700 flex justify-between items-center gap-4">
+            <div>
+                <h4 class="text-white font-semibold text-sm">${escHTML(r.title)}</h4>
+                <p class="text-xs text-slate-400 mt-0.5">by ${escHTML(r.author)}</p>
+            </div>
+            <a href="${r.link}" target="_blank" rel="noopener" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 flex items-center gap-1">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Open
+            </a>
+        </div>`).join('') || '<p class="text-slate-500 text-sm text-center py-4">Select your Year</p>';
+    feed.innerHTML = `<div class="flex flex-wrap gap-2 mb-5">${tabs}</div><div class="space-y-3">${items}</div>`;
+};
+
+// ── DROPDOWN / PILL HELPERS ──────────────────────────────────────────
+window.toggleDropdown = function() {
+    document.getElementById('category-options').classList.toggle('hidden');
+};
+window.setCategory = function(value, label) {
+    document.getElementById('category-dropdown-btn').dataset.value = value;
+    document.getElementById('selected-category-text').innerHTML =
+        `<i class="fa-solid fa-tag text-indigo-400 text-xs"></i> ${escHTML(label)}`;
+    document.getElementById('category-options').classList.add('hidden');
+};
+window.selectPill = function(hiddenId, btn) {
+    document.getElementById(hiddenId).value = btn.dataset.value;
+    btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('bg-indigo-600','text-white','border-indigo-500');
+        b.classList.add('bg-slate-800','text-slate-300','border-slate-700');
+    });
+    btn.classList.add('bg-indigo-600','text-white','border-indigo-500');
+    btn.classList.remove('bg-slate-800','text-slate-300');
+};
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('#ticket-category-wrapper'))
+        document.getElementById('category-options')?.classList.add('hidden');
+});
+</script>
+</body>
+</html>
