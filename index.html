@@ -348,13 +348,15 @@ input:focus, textarea:focus, select:focus {
     </div>
 </div>
 <!-- LOGIN SCREEN -->
-<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-black z-50 fixed inset-0">
+<div id="login-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center px-4">
 
-    <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
+    <div class="glass-card w-full max-w-md mx-auto p-6 sm:p-8 rounded-2xl text-center flex flex-col items-center justify-center">
+
         <!-- 🔷 CUSTOM SVG LOGO -->
-        <div class="flex justify-center mb-6">
-            <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
-
+        <div class="flex justify-center items-center mb-6 w-full">
+            <svg class="w-14 sm:w-16 md:w-20 h-auto mx-auto"
+                 viewBox="0 0 60 100"
+                 xmlns="http://www.w3.org/2000/svg">
                 <style>
                     .line-animate {
                         stroke: white;
