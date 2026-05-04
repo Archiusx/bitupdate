@@ -352,29 +352,50 @@ input:focus, textarea:focus, select:focus {
 
     <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
 
-        <!-- 🔷 CUSTOM SVG LOGO (Inspired from your image) -->
+        <!-- 🔷 CUSTOM SVG LOGO -->
         <div class="flex justify-center mb-6">
-            <svg width="70" height="90" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                
-                <!-- Tower -->
-                <path d="M30 5 L50 35 V95 H10 V35 Z" 
-                      stroke="white" stroke-width="2" fill="none"/>
+            <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
 
-                <!-- Center line -->
-                <line x1="30" y1="5" x2="30" y2="95" stroke="white" stroke-width="1.5"/>
+                <style>
+                    .line-animate {
+                        stroke: white;
+                        stroke-width: 2;
+                        fill: none;
+                        stroke-dasharray: 200;
+                        stroke-dashoffset: 200;
+                        animation: drawLine 1.8s ease forwards;
+                    }
 
-                <!-- Base triangle -->
-                <path d="M30 60 L45 90 H15 Z" 
-                      stroke="white" stroke-width="1.5" fill="none"/>
+                    .delay-1 { animation-delay: 0.3s; }
+                    .delay-2 { animation-delay: 0.8s; }
+                    .delay-3 { animation-delay: 1.3s; }
 
-                <!-- Glow -->
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                    <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                </filter>
+                    @keyframes drawLine {
+                        to {
+                            stroke-dashoffset: 0;
+                        }
+                    }
+
+                    .glow {
+                        filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+                    }
+                </style>
+
+                <!-- Left pillar -->
+                <path d="M30 5 L10 35" class="line-animate glow"/>
+
+                <!-- Right pillar -->
+                <path d="M30 5 L50 35" class="line-animate glow delay-1"/>
+
+                <!-- Vertical center -->
+                <line x1="30" y1="5" x2="30" y2="95" class="line-animate glow delay-2"/>
+
+                <!-- Base connection -->
+                <path d="M10 35 V95 H50 V35" class="line-animate glow delay-2"/>
+
+                <!-- Bottom triangle -->
+                <path d="M30 60 L45 90 H15 Z" class="line-animate glow delay-3"/>
+
             </svg>
         </div>
 
