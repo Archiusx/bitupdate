@@ -352,16 +352,18 @@ input:focus, textarea:focus, select:focus {
 
     <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
 
-        <!-- 🔷 CUSTOM SVG LOGO (SAFE ANIMATED) -->
+        <!-- 🔷 CUSTOM SVG LOGO (SAFE ANIMATED - CINEMATIC) -->
 <div class="flex justify-center mb-6 mt-4">
     <svg class="w-16 sm:w-20 h-auto" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
 
-        <!-- Tower outline (draw first) -->
+        <!-- Tower outline -->
         <path d="M30 5 L50 35 V95 H10 V35 Z"
               stroke="white" stroke-width="2" fill="none"
               stroke-dasharray="260" stroke-dashoffset="260">
             <animate attributeName="stroke-dashoffset"
-                     to="0" dur="0.8s" begin="0s" fill="freeze"/>
+                     to="0" dur="1.4s" begin="0s"
+                     calcMode="spline" keySplines="0.42 0 0.58 1"
+                     fill="freeze"/>
         </path>
 
         <!-- Center line -->
@@ -369,7 +371,9 @@ input:focus, textarea:focus, select:focus {
               stroke="white" stroke-width="1.5"
               stroke-dasharray="120" stroke-dashoffset="120">
             <animate attributeName="stroke-dashoffset"
-                     to="0" dur="0.6s" begin="0.6s" fill="freeze"/>
+                     to="0" dur="1.1s" begin="1s"
+                     calcMode="spline" keySplines="0.42 0 0.58 1"
+                     fill="freeze"/>
         </line>
 
         <!-- Triangle -->
@@ -377,19 +381,23 @@ input:focus, textarea:focus, select:focus {
               stroke="white" stroke-width="1.5" fill="none"
               stroke-dasharray="100" stroke-dashoffset="100">
             <animate attributeName="stroke-dashoffset"
-                     to="0" dur="0.5s" begin="1.1s" fill="freeze"/>
+                     to="0" dur="0.9s" begin="1.9s"
+                     calcMode="spline" keySplines="0.42 0 0.58 1"
+                     fill="freeze"/>
         </path>
 
         <!-- Glow after complete -->
         <g opacity="0">
             <animate attributeName="opacity"
-                     from="0" to="1" dur="0.4s" begin="1.4s" fill="freeze"/>
+                     from="0" to="1" dur="0.6s" begin="2.6s"
+                     calcMode="spline" keySplines="0.42 0 0.58 1"
+                     fill="freeze"/>
             <rect width="60" height="100" fill="transparent"
-                  style="filter: drop-shadow(0 0 6px white) drop-shadow(0 0 12px white);"/>
+                  style="filter: drop-shadow(0 0 8px white) drop-shadow(0 0 16px white);"/>
         </g>
 
     </svg>
-</div>
+ </div>
 
         <!-- Title -->
         <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
@@ -431,6 +439,7 @@ input:focus, textarea:focus, select:focus {
         <!-- Footer -->
         <p class="text-xs text-gray-600 mt-6">
             Secure student support tracking — BIT Wardha
+            Developed by <b>Piyush Deshkar</b>
         </p>
 
     </div>
