@@ -352,82 +352,61 @@ input:focus, textarea:focus, select:focus {
 
     <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
 
-<!-- 🔷 CUSTOM SVG LOGO (CINEMATIC SYNCED) -->
-<div class="flex justify-center mb-6 mt-4">
-    <svg class="w-16 sm:w-20 h-auto"
-         viewBox="0 0 60 100"
-         xmlns="http://www.w3.org/2000/svg"
-         opacity="0">
+        <!-- 🔷 CUSTOM SVG LOGO -->
+        <div class="flex justify-center mb-6">
+            <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
 
-        <!-- Fade-in -->
-        <animate attributeName="opacity"
-                 from="0" to="1"
-                 dur="0.6s" begin="0s"
-                 fill="freeze"/>
+                <style>
+                    .line-animate {
+                        stroke: white;
+                        stroke-width: 2;
+                        fill: none;
+                        stroke-dasharray: 200;
+                        stroke-dashoffset: 200;
+                        animation: drawLine 1.8s ease forwards;
+                    }
 
-        <!-- LEFT pillar -->
-        <path d="M30 5 L10 35"
-              stroke="white" stroke-width="2" fill="none"
-              stroke-dasharray="100" stroke-dashoffset="100">
-            <animate attributeName="stroke-dashoffset"
-                     to="0" dur="1.2s" begin="0.4s"
-                     calcMode="spline" keySplines="0.42 0 0.58 1"
-                     fill="freeze"/>
-        </path>
+                    .delay-1 { animation-delay: 0.3s; }
+                    .delay-2 { animation-delay: 0.8s; }
+                    .delay-3 { animation-delay: 1.3s; }
 
-        <!-- RIGHT pillar -->
-        <path d="M30 5 L50 35"
-              stroke="white" stroke-width="2" fill="none"
-              stroke-dasharray="100" stroke-dashoffset="100">
-            <animate attributeName="stroke-dashoffset"
-                     to="0" dur="1.2s" begin="0.4s"
-                     calcMode="spline" keySplines="0.42 0 0.58 1"
-                     fill="freeze"/>
-        </path>
+                    @keyframes drawLine {
+                        to {
+                            stroke-dashoffset: 0;
+                        }
+                    }
 
-        <!-- CENTER line -->
-        <line x1="30" y1="5" x2="30" y2="95"
-              stroke="white" stroke-width="1.5"
-              stroke-dasharray="120" stroke-dashoffset="120">
-            <animate attributeName="stroke-dashoffset"
-                     to="0" dur="1s" begin="1s"
-                     calcMode="spline" keySplines="0.42 0 0.58 1"
-                     fill="freeze"/>
-        </line>
+                    .glow {
+                        filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+                    }
+                </style>
 
-        <!-- BASE -->
-        <path d="M10 35 V95 H50 V35"
-              stroke="white" stroke-width="2" fill="none"
-              stroke-dasharray="200" stroke-dashoffset="200">
-            <animate attributeName="stroke-dashoffset"
-                     to="0" dur="1s" begin="1s"
-                     calcMode="spline" keySplines="0.42 0 0.58 1"
-                     fill="freeze"/>
-        </path>
+                <!-- Left pillar -->
+                <path d="M30 5 L10 35" class="line-animate glow"/>
 
-        <!-- TRIANGLE -->
-        <path d="M30 60 L45 90 H15 Z"
-              stroke="white" stroke-width="1.5" fill="none"
-              stroke-dasharray="100" stroke-dashoffset="100">
-            <animate attributeName="stroke-dashoffset"
-                     to="0" dur="0.9s" begin="1.9s"
-                     calcMode="spline" keySplines="0.42 0 0.58 1"
-                     fill="freeze"/>
-        </path>
+                <!-- Right pillar -->
+                <path d="M30 5 L50 35" class="line-animate glow delay-1"/>
 
-        <!-- FINAL GLOW -->
-        <g opacity="0">
-            <animate attributeName="opacity"
-                     from="0" to="1"
-                     dur="0.6s" begin="2.6s"
-                     fill="freeze"/>
-            <rect width="60" height="100" fill="transparent"
-                  style="filter: drop-shadow(0 0 10px white) drop-shadow(0 0 20px white);"/>
-        </g>
+                <!-- Vertical center -->
+                <line x1="30" y1="5" x2="30" y2="95" class="line-animate glow delay-2"/>
 
-    </svg>
-</div>
+                <!-- Base connection -->
+                <path d="M10 35 V95 H50 V35" class="line-animate glow delay-2"/>
 
+                <!-- Bottom triangle -->
+                <path d="M30 60 L45 90 H15 Z" class="line-animate glow delay-3"/>
+
+            </svg>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
+            BIT Updates
+        </h1>
+
+        <p class="text-sm text-gray-400 mb-8 font-medium">
+            Student Support & Feedback Portal
+        </p>
         <!-- Title -->
         <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
             BIT Updates
