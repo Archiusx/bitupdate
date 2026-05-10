@@ -1,0 +1,135 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    // ───────── SUPPORT TICKETS ─────────
+    "support_tickets": {
+      // RTDB cannot filter list queries server-side, so signed-in users
+      // can read the collection. Privacy (Maintenance = public, others
+      // = author/admin/assignee only) is enforced client-side by
+      // isTicketVisible() in index.html and script.js.
+      ".read": "auth != null",
+
+      "$ticketId": {
+        ".write": "auth != null && (
+          auth.uid === 'jXHtnrFhi4USqx4HZRfNgjGIsPY2' ||
+          (!data.exists() && newData.child('authorId').val() === auth.uid) ||
+          (data.exists() && data.child('authorId').val() === auth.uid)
+        )",
+
+        "authorId": {
+          ".validate": "newData.isString() && ((data.exists() && newData.val() === data.val()) || (!data.exists() && newData.val() === auth.uid))"
+        },
+
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120"
+        },
+
+        "description": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1500"
+        },
+
+        "category":   { ".validate": "newData.isString()" },
+        "year":       { ".validate": "newData.isString()" },
+        "branch":     { ".validate": "newData.isString()" },
+
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'open' || newData.val() === 'closed')"
+        },
+
+        "assignedTo": {
+          ".validate": "newData.isString() || newData.val() === null"
+        },
+
+        // UID of the assigned person — used by client-side privacy filter
+        "assignedToUid": {
+          ".validate": "newData.isString() || newData.val() === null"
+        },
+
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+
+        // ✅ COMMENTS
+        "comments": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+
+          "$commentId": {
+            ".validate": "newData.hasChildren(['text','authorId','createdAt'])",
+
+            "text": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 600"
+            },
+
+            "authorId": {
+              ".validate": "newData.val() === auth.uid"
+            },
+
+            "authorName": {
+              ".validate": "newData.isString() || newData.val() === null"
+            },
+
+            "isAdmin": {
+              ".validate": "newData.isBoolean()"
+            },
+
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        }
+      }
+    },
+
+    // ───────── USERS ─────────
+    "users": {
+      "$uid": {
+        ".read":  "auth != null && (auth.uid === $uid || auth.uid === 'jXHtnrFhi4USqx4HZRfNgjGIsPY2')",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    // ───────── ANNOUNCEMENTS ─────────
+    "announcements": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    // ───────── NOTIFICATIONS ─────────
+    "notifications": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    // ───────── ADMINS ─────────
+    "admins": {
+      ".read": "auth != null",
+      ".write": false
+    },
+
+    // ───────── MEMBERS (staff roster) ─────────
+    // All signed-in users can read (needed for assign dropdown).
+    // Only the two admin UIDs can write (add / update / remove).
+    "members": {
+      ".read": "auth != null",
+      "$memberId": {
+        ".write": "auth != null && (
+          auth.uid === 'jXHtnrFhi4USqx4HZRfNgjGIsPY2' ||
+          auth.token.email === 'co.2024.prdeshkar@bitwardha.ac.in' ||
+          auth.token.email === 'class11art@gmail.com'
+        )",
+        ".validate": "newData.hasChildren(['name','role','status'])",
+        "name":   { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 60" },
+        "role":   { ".validate": "newData.isString() && (newData.val() === 'Principal' || newData.val() === 'HOD' || newData.val() === 'Faculty' || newData.val() === 'Technician' || newData.val() === 'Lab Assistant')" },
+        "email":  { ".validate": "newData.isString() || newData.val() === null" },
+        "status": { ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'approved')" },
+        "addedBy":    { ".validate": "newData.isString() || newData.val() === null" },
+        "addedAt":    { ".validate": "newData.isNumber() || newData.val() === null" },
+        "approvedBy": { ".validate": "newData.isString() || newData.val() === null" },
+        "approvedAt": { ".validate": "newData.isNumber() || newData.val() === null" }
+      }
+    }
+  }
+}
