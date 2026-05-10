@@ -1,0 +1,3396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIT Updates | Student Support Portal</title>
+<meta name="description" content="A student-developed support interface for BIT Wardha. Submit academic queries, track resolution status, and stay informed.">
+<meta property="og:title" content="BIT Updates | Student Support Portal">
+<meta property="og:description" content="Submit academic queries securely, track resolution status, and stay informed through community-shared updates.">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <rect width='100' height='100' rx='20' fill='%231e293b'/>
+  <rect x='40' y='35' width='20' height='40' fill='%23f8fafc'/>
+  <polygon points='50,15 65,35 35,35' fill='%236366f1'/>
+  <rect x='45' y='45' width='4' height='4' fill='%231e293b'/>
+  <rect x='51' y='45' width='4' height='4' fill='%231e293b'/>
+  <rect x='45' y='52' width='4' height='4' fill='%231e293b'/>
+  <rect x='51' y='52' width='4' height='4' fill='%231e293b'/>
+</svg>">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+/* ===== ROOT DESIGN TOKENS ===== */
+:root {
+    --bg-main: #000000;
+    --bg-soft: #0a0a0a;
+    --bg-glass: rgba(20, 20, 20, 0.65);
+
+    --text-main: #f5f5f5;
+    --text-muted: #a1a1aa;
+
+    --border-soft: rgba(255,255,255,0.08);
+
+    /* Neon Accent (controlled, not overkill) */
+    --neon: #ffffff;
+    --neon-glow: rgba(255,255,255,0.35);
+}
+
+/* ===== BASE ===== */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at top, #0a0a0a, #000000);
+    color: var(--text-main);
+}
+
+/* ===== GLASS MORPHISM CARD ===== */
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.85),
+        0 0 20px rgba(255,255,255,0.06);
+}
+
+/* ===== NEON BUTTON ===== */
+.neon-btn {
+    border: 1px solid var(--neon);
+    color: var(--text-main);
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.neon-btn:hover {
+    background: rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 10px var(--neon-glow),
+        0 0 25px rgba(255,255,255,0.15);
+    transform: scale(1.03);
+}
+
+/* ===== PULSE (CONTROLLED) ===== */
+.pulse-btn {
+    animation: pulse 2.2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 var(--neon-glow); }
+    70% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* ===== INPUTS ===== */
+input, textarea, select {
+    background: #0d0d0d;
+    color: var(--text-main);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.25s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,0.12),
+        0 0 10px rgba(255,255,255,0.1);
+    background: #111;
+}
+
+/* ===== NAV TABS ===== */
+.nav-tab-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.nav-tab-btn.active {
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 12px rgba(255,255,255,0.08);
+}
+
+.nav-tab-btn:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* ===== FILTER BUTTON ===== */
+.status-filter-btn.active {
+    background: #111;
+    border: 1px solid #444;
+    box-shadow: 0 0 10px rgba(255,255,255,0.08);
+}
+
+/* ===== CATEGORY ITEM ===== */
+.cat-item {
+    transition: all 0.2s ease;
+}
+
+.cat-item:hover {
+    background: rgba(255,255,255,0.06);
+    transform: translateX(4px);
+}
+
+/* ===== TICKET CARD ===== */
+.ticket-card {
+    background: var(--bg-soft);
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    border-color: #555;
+    box-shadow:
+        0 0 15px rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* ===== MODAL ===== */
+.modal-enter {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== SVG ICON SYSTEM ===== */
+.icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-muted);
+    transition: all 0.25s ease;
+}
+
+.icon:hover {
+    stroke: var(--neon);
+    filter: drop-shadow(0 0 6px var(--neon-glow));
+    transform: scale(1.1);
+}
+
+/* ===== HIDDEN ===== */
+.hidden-safely {
+    display: none !important;
+}
+
+/* ===== ROLE BADGES ===== */
+.role-Principal  { background:rgba(168,85,247,.15); color:#c084fc; border-color:rgba(168,85,247,.35); }
+.role-HOD        { background:rgba(59,130,246,.15); color:#60a5fa; border-color:rgba(59,130,246,.35); }
+.role-Faculty    { background:rgba(16,185,129,.15); color:#34d399; border-color:rgba(16,185,129,.35); }
+.role-Technician { background:rgba(245,158,11,.15); color:#fbbf24; border-color:rgba(245,158,11,.35); }
+.role-Lab        { background:rgba(6,182,212,.15);  color:#22d3ee; border-color:rgba(6,182,212,.35); }
+
+/* ===== EQUIPMENT CARDS ===== */
+.equip-card          { background:rgba(15,23,42,.8); border:1px solid #1e293b; border-radius:14px; padding:14px; transition:.2s; }
+.equip-card:hover    { border-color:#334155; }
+.equip-healthy       { border-color:rgba(16,185,129,.5) !important; }
+.equip-warning       { border-color:rgba(245,158,11,.5) !important; }
+.equip-critical      { border-color:rgba(239,68,68,.5) !important; }
+.equip-bar           { height:6px; border-radius:999px; background:#1e293b; overflow:hidden; }
+.equip-bar-fill      { height:100%; border-radius:999px; transition:width .4s; }
+
+/* ===== MY-WORK TASK CARDS ===== */
+.task-card { background:#0a0f1a; border:1px solid #1e293b; border-radius:14px; padding:16px; }
+.task-pending  { border-left:3px solid #f59e0b; }
+.task-accepted { border-left:3px solid #10b981; }
+.task-rejected { border-left:3px solid #ef4444; }
+.task-done     { border-left:3px solid #6366f1; }
+.task-confirmed{ border-left:3px solid #a855f7; }
+
+/* ===== BELL / NOTIFICATION ===== */
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    background: #ef4444;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    border: 2px solid #000;
+    pointer-events: none;
+}
+@keyframes bellRing {
+    0%,100% { transform: rotate(0); }
+    15%      { transform: rotate(14deg); }
+    30%      { transform: rotate(-12deg); }
+    45%      { transform: rotate(10deg); }
+    60%      { transform: rotate(-8deg); }
+    75%      { transform: rotate(5deg); }
+}
+.bell-ring {
+    animation: bellRing 0.7s ease-in-out;
+}
+#notif-panel {
+    position: fixed;
+    top: 68px;
+    right: 16px;
+    width: 340px;
+    max-height: 480px;
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    z-index: 9990;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+@media (max-width: 400px) {
+    #notif-panel { width: calc(100vw - 32px); right: 16px; }
+}
+
+/* ===== ANNOUNCEMENT MEDIA ===== */
+.ann-media-drop {
+    border: 2px dashed #2a2a2a;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.ann-media-drop:hover, .ann-media-drop.drag-over {
+    border-color: #6366f1;
+    background: rgba(99,102,241,0.06);
+}
+.poll-option-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+
+/* ===== IMAGE UPLOAD ===== */
+#img-drop-zone:has(+ #img-file-input:focus-visible) {
+    border-color: var(--neon);
+    background: rgba(99,102,241,0.06);
+}
+@keyframes uploadPulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+}
+#img-progress-bar.uploading {
+    animation: uploadPulse 1.4s ease-in-out infinite;
+}
+    </style>
+
+</head>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<!-- Toast -->
+<div id="toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+
+<!-- Notification Panel -->
+<div id="notif-panel" class="hidden-safely flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <span class="font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-bell text-indigo-400"></i> Notifications
+        </span>
+        <div class="flex items-center gap-2">
+            <button id="notif-mark-all-read" class="text-[11px] text-indigo-400 hover:text-indigo-300 transition">Mark all read</button>
+            <button id="notif-panel-close" class="text-slate-500 hover:text-white transition p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin: Send Notification Form -->
+    <div id="notif-send-form" class="hidden-safely p-3 border-b border-slate-800 bg-slate-900/60">
+        <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+            <i class="fa-solid fa-paper-plane text-indigo-400"></i> Send Notification to All
+        </p>
+        <input id="notif-send-title" type="text" maxlength="60" placeholder="Title (e.g. Exam Schedule)" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 mb-2 transition">
+        <textarea id="notif-send-body" maxlength="300" rows="2" placeholder="Message..." class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2 resize-none mb-2 transition"></textarea>
+        <button onclick="sendAdminNotification()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1">
+            <i class="fa-solid fa-broadcast-tower text-[10px]"></i> Broadcast Notification
+        </button>
+    </div>
+
+    <!-- Notification List -->
+    <div id="notif-list" class="flex-1 overflow-y-auto p-2 space-y-1.5">
+        <p class="text-slate-500 text-xs text-center py-8">No notifications yet.</p>
+    </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div id="confirm-dialog" class="hidden-safely fixed inset-0 z-[9998] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl modal-enter">
+        <h3 class="text-white font-bold text-base mb-2" id="confirm-title">Confirm Action</h3>
+        <p class="text-slate-400 text-sm mb-6" id="confirm-msg">Are you sure?</p>
+        <div class="flex gap-3 justify-end">
+            <button id="confirm-cancel" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm transition">Cancel</button>
+            <button id="confirm-ok" class="px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-500 text-sm transition font-semibold">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Modal -->
+<div id="assign-modal" class="hidden-safely fixed inset-0 z-[9997] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl modal-enter">
+        <h3 class="text-white font-bold text-base mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-user-plus text-indigo-400"></i> Assign Ticket
+        </h3>
+        <p class="text-slate-500 text-xs mb-4" id="assign-modal-target"></p>
+        <div class="mb-3">
+            <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1.5 block">Select Staff Member</label>
+            <select id="assign-modal-select" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 mb-1 appearance-none cursor-pointer">
+                <option value="">— Choose from registered members —</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1.5 block">Or enter custom name</label>
+            <input id="assign-modal-input" type="text" maxlength="60" placeholder="Type a name manually..." class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3">
+            <p class="text-[10px] text-slate-600 mt-1">Custom name is used only if no member is selected above.</p>
+        </div>
+        <div class="flex gap-3 justify-end">
+            <button onclick="closeAssignModal()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm transition">Cancel</button>
+            <button id="assign-modal-clear" onclick="window._clearAssignment && window._clearAssignment()" class="px-4 py-2 rounded-lg bg-slate-800 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-sm transition">Clear</button>
+            <button id="assign-modal-submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 text-sm transition font-semibold">Assign</button>
+        </div>
+    </div>
+</div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-black z-50 fixed inset-0">
+
+    <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center relative overflow-hidden">
+
+        <!-- 🔷 CUSTOM SVG LOGO -->
+        <div class="flex justify-center mb-6">
+            <svg width="70" height="90" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+
+                <style>
+                    .line-animate {
+                        stroke: white;
+                        stroke-width: 2;
+                        fill: none;
+                        stroke-dasharray: 200;
+                        stroke-dashoffset: 200;
+                        animation: drawLine 1.8s ease forwards;
+                    }
+
+                    .delay-1 { animation-delay: 0.3s; }
+                    .delay-2 { animation-delay: 0.8s; }
+                    .delay-3 { animation-delay: 1.3s; }
+
+                    @keyframes drawLine {
+                        to {
+                            stroke-dashoffset: 0;
+                        }
+                    }
+
+                    .glow {
+                        filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+                    }
+                </style>
+
+                <!-- Left pillar -->
+                <path d="M30 5 L10 35" class="line-animate glow"/>
+
+                <!-- Right pillar -->
+                <path d="M30 5 L50 35" class="line-animate glow delay-1"/>
+
+                <!-- Vertical center -->
+                <line x1="30" y1="5" x2="30" y2="95" class="line-animate glow delay-2"/>
+
+                <!-- Base connection -->
+                <path d="M10 35 V95 H50 V35" class="line-animate glow delay-2"/>
+
+                <!-- Bottom triangle -->
+                <path d="M30 60 L45 90 H15 Z" class="line-animate glow delay-3"/>
+
+            </svg>
+        </div>
+     
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">
+            BIT Updates
+        </h1>
+
+        <p class="text-sm text-gray-400 mb-8 font-medium">
+            Student Support & Feedback Portal
+        </p>
+
+        <!-- Buttons -->
+        <div class="space-y-3">
+
+            <!-- Google -->
+            <button id="btn-google-signin"
+                class="w-full flex items-center justify-center gap-3 bg-[#0d0d0d] border border-gray-700 text-gray-200 px-6 py-3.5 rounded-xl font-medium hover:bg-[#141414] hover:border-white transition-all hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                     class="w-5 h-5">
+                
+                <span>Sign in with Google</span>
+            </button>
+
+            <!-- Guest -->
+            <button id="btn-anon-signin"
+                class="w-full flex items-center justify-center gap-3 bg-[#111] text-gray-300 px-6 py-3.5 rounded-xl font-medium hover:bg-[#1a1a1a] transition-all hover:shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                
+                <i class="fa-solid fa-user-secret text-gray-400"></i>
+                <span>Continue as Guest</span>
+            </button>
+
+        </div>
+
+        <!-- Error -->
+        <p id="login-error"
+            class="hidden-safely text-xs text-red-400 mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+        </p>
+
+        <!-- Footer -->
+        <p class="text-xs text-gray-600 mt-6">
+            Secure student support tracking — BIT Wardha
+            Developed by <b>Piyush Deshkar</b>
+        </p>
+
+    </div>
+</div>
+
+
+<!-- MAIN APP -->
+<div id="main-app" class="hidden-safely flex-1 flex flex-col w-full max-w-full overflow-hidden">
+
+    <!-- Navbar -->
+
+
+        <!-- RIGHT SIDE -->
+        <nav class="bg-black/70 backdrop-blur-md border-b border-white/10 sticky top-0 z-30 shadow-lg">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- LEFT -->
+        <div class="flex items-center gap-3">
+
+            <!-- 🔷 MINIMAL TOWER LOGO -->
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] transition">
+
+                <svg width="22" height="30" viewBox="0 0 60 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                    <!-- Glow -->
+                    <defs>
+                        <filter id="towerGlow">
+                            <feGaussianBlur stdDeviation="1" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- Tower Shape -->
+                    <path d="M30 5 L50 35 V115 H10 V35 Z"
+                          stroke="white"
+                          stroke-width="2"
+                          fill="none"
+                          filter="url(#towerGlow)"/>
+
+                    <!-- Center Divider -->
+                    <line x1="30" y1="5" x2="30" y2="115"
+                          stroke="white"
+                          stroke-width="1.5"
+                          opacity="0.7"/>
+
+                </svg>
+
+            </div>
+
+            <!-- TEXT -->
+            <div>
+                <h1 class="font-semibold text-sm text-white tracking-wide">
+                    BIT Updates
+                </h1>
+                <p class="text-[9px] text-white/50 uppercase tracking-widest">
+                    Support Portal
+                </p>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="flex items-center gap-3">
+
+            <div class="hidden sm:flex flex-col items-end">
+                <span id="user-name" class="text-sm font-semibold text-white">
+                    Student
+                </span>
+
+                <span id="admin-badge"
+                    class="hidden-safely text-[9px] bg-white text-black px-1.5 py-0.5 rounded uppercase font-bold tracking-widest mt-0.5">
+                    Admin
+                </span>
+            </div>
+
+            <!-- Bell Icon -->
+            <button id="btn-bell"
+                class="relative text-white/60 hover:text-white p-2.5 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/10"
+                title="Notifications">
+                <i id="bell-icon" class="fa-solid fa-bell text-xl"></i>
+                <span id="notif-badge" class="notif-badge hidden-safely">0</span>
+            </button>
+
+            <button id="btn-menu"
+                class="text-white/60 hover:text-white p-2.5 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/10">
+
+                <i class="fa-solid fa-user-circle text-xl"></i>
+            </button>
+
+        </div>
+
+    </div>
+        </nav>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="hidden-safely fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[90vh] border border-slate-800">
+            <div class="bg-slate-800/60 p-5 flex justify-between items-center border-b border-slate-800">
+                <h2 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-indigo-400"></i> Edit Profile
+                </h2>
+                <button id="btn-close-modal" class="text-slate-500 hover:text-white bg-slate-800 p-2 rounded-full border border-slate-700 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Full Name</label>
+                    <input type="text" id="prof-name" maxlength="80" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">PRN Number</label>
+                    <input type="text" id="prof-prn" placeholder="e.g. 24046491245070" maxlength="20" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Branch</label>
+                        <input type="text" id="prof-branch" placeholder="e.g. CSE" maxlength="30" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-indigo-300/80 mb-1.5 uppercase tracking-wider">Semester</label>
+                        <select id="prof-sem" class="w-full bg-slate-800 border border-slate-700 text-sm text-slate-200 rounded-xl p-3 transition">
+                            <option value="">Select...</option>
+                            <option value="I">Sem I</option><option value="II">Sem II</option>
+                            <option value="III">Sem III</option><option value="IV">Sem IV</option>
+                            <option value="V">Sem V</option><option value="VI">Sem VI</option>
+                            <option value="VII">Sem VII</option><option value="VIII">Sem VIII</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="btn-save-profile" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm px-5 py-3 shadow-md transition flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Profile
+                </button>
+                <button type="button" id="btn-logout-modal" class="w-full text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 font-medium rounded-xl text-sm px-5 py-3 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Secure Sign Out
+                </button>
+                <div id="admin-profile-badge" class="hidden-safely bg-rose-500/10 text-rose-300 px-3 py-2 rounded-lg font-bold text-xs uppercase tracking-widest text-center border border-rose-500/20">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> System Administrator
+                </div>
+                <div id="member-role-badge" class="hidden-safely px-3 py-3 rounded-xl border text-center">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Registered Role</p>
+                    <p id="member-role-text" class="font-bold text-sm flex items-center justify-center gap-2">
+                        <i id="member-role-icon" class="fa-solid fa-id-badge"></i>
+                        <span id="member-role-label">Staff</span>
+                    </p>
+                    <p id="member-role-email" class="text-[10px] text-slate-500 mt-1"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+
+        <!-- LEFT: Form -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-indigo-500">
+                <h2 class="text-indigo-400 font-bold flex items-center gap-2 mb-2 text-sm tracking-wide uppercase">
+                    <i class="fa-solid fa-bullhorn"></i> Platform Notice
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed">This acts as a student-developed support interface. Submit academic queries securely, track resolution status, and stay informed through community-shared updates.</p>
+            </div>
+
+            <!-- Ticket Form -->
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="font-bold text-white mb-5 text-lg tracking-tight" id="form-title">Raise a Ticket</h2>
+                <div id="ticket-form" class="flex flex-col gap-4">
+
+                    <!-- Category Dropdown -->
+                    <div class="relative" id="ticket-category-wrapper">
+                        <button type="button" id="category-dropdown-btn" data-value="" onclick="toggleDropdown()" class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 flex justify-between items-center transition hover:border-indigo-500">
+                            <span id="selected-category-text" class="flex items-center gap-2">
+                                <i class="fa-solid fa-tag text-slate-500 text-xs"></i> Select category...
+                            </span>
+<i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+</button>
+<div id="category-options" class="absolute hidden z-20 w-full bg-slate-900 border border-slate-700 mt-1 rounded-xl shadow-2xl overflow-hidden">
+    
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('General','General')">
+        <i class="fa-solid fa-layer-group text-slate-400 text-xs w-4"></i> General
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Circular','Circular / Notice')">
+        <i class="fa-solid fa-bullhorn text-blue-400 text-xs w-4"></i> Circular / Notice
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Academic','Academic Query')">
+        <i class="fa-solid fa-book-open text-emerald-400 text-xs w-4"></i> Academic Query
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Exam','Exam and Results')">
+        <i class="fa-solid fa-file-pen text-purple-400 text-xs w-4"></i> Exam and Results
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Technical','Technical / Portal')">
+        <i class="fa-solid fa-desktop text-amber-400 text-xs w-4"></i> Technical / Portal
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Maintenance','Maintenance')">
+        <i class="fa-solid fa-screwdriver-wrench text-orange-400 text-xs w-4"></i> Maintenance
+    </div>
+
+    <div class="cat-item p-3 cursor-pointer text-sm text-slate-300 flex items-center gap-2 rounded-lg m-1 transition" onclick="setCategory('Other','Other Issue')">
+        <i class="fa-solid fa-circle-question text-rose-400 text-xs w-4"></i> Other Issue
+    </div>
+
+</div>
+                    </div>
+
+                    <!-- Year Selector -->
+                    <div class="space-y-2">
+                        <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Study Year</label>
+                        <div class="flex gap-2 flex-wrap" id="year-selector">
+                            <button type="button" data-value="1st Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">1st</button>
+                            <button type="button" data-value="2nd Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">2nd</button>
+                            <button type="button" data-value="3rd Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">3rd</button>
+                            <button type="button" data-value="4th Year" onclick="selectPill('ticket-year', this)" class="flex-1 min-w-[54px] bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium">4th</button>
+                        </div>
+                        <input type="hidden" id="ticket-year" value="">
+                    </div>
+
+                    <!-- Branch Selector -->
+<div class="space-y-2">
+    <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Branch</label>
+    <div class="grid grid-cols-2 gap-2" id="branch-selector">
+        
+        <button type="button" data-value="Computer" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-laptop-code text-blue-400"></i>
+            Computer
+        </button>
+
+        <button type="button" data-value="Civil" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-building text-amber-400"></i>
+            Civil
+        </button>
+
+        <button type="button" data-value="Mechanical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-gear text-gray-400"></i>
+            Mechanical
+        </button>
+
+        <button type="button" data-value="Electrical" onclick="selectPill('ticket-branch', this)"
+            class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2.5 hover:bg-slate-700 transition font-medium flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-yellow-400"></i>
+            Electrical
+        </button>
+
+    </div>
+    <input type="hidden" id="ticket-branch" value="">
+</div>
+
+                    <input type="text" id="ticket-title" placeholder="Brief subject..." maxlength="120" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 transition">
+                    <textarea id="ticket-desc" rows="4" placeholder="Describe the issue in detail..." maxlength="1500" class="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 resize-none transition"></textarea>
+
+                    <!-- ── IMAGE ATTACH ─────────────────────────────── -->
+                    <div class="space-y-2">
+                        <label class="text-xs text-slate-400 font-semibold uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-paperclip text-indigo-400"></i> Attach Image <span class="text-slate-600 font-normal normal-case">(optional · max 5 MB)</span>
+                        </label>
+
+                        <!-- Drop zone -->
+                        <label for="img-file-input" id="img-drop-zone"
+                            class="flex flex-col items-center justify-center gap-2 w-full cursor-pointer border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/60 hover:bg-slate-800/60 rounded-xl p-4 transition group"
+                            ondragover="event.preventDefault(); this.classList.add('border-indigo-400','bg-indigo-950/20')"
+                            ondragleave="this.classList.remove('border-indigo-400','bg-indigo-950/20')"
+                            ondrop="event.preventDefault(); this.classList.remove('border-indigo-400','bg-indigo-950/20'); if(event.dataTransfer.files[0]){ document.getElementById('img-file-input').files=event.dataTransfer.files; handleImagePick(document.getElementById('img-file-input')); }">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-600 group-hover:text-indigo-400 transition"></i>
+                            <span class="text-xs text-slate-500 group-hover:text-slate-300 transition text-center">Click or drag &amp; drop image<br><span class="text-[10px] text-slate-600">JPG · PNG · WEBP · GIF</span></span>
+                        </label>
+                        <input type="file" id="img-file-input" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" onchange="handleImagePick(this)">
+
+                        <!-- Preview -->
+                        <div id="img-preview-wrap" class="hidden flex items-center gap-3 bg-slate-800/70 border border-slate-700 rounded-xl p-3">
+                            <img id="img-thumb" src="" alt="preview" class="w-14 h-14 object-cover rounded-lg border border-slate-600 shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <p id="img-file-name" class="text-xs font-semibold text-slate-200 truncate"></p>
+                                <p id="img-file-size" class="text-[10px] text-slate-500 mt-0.5"></p>
+                                <p class="text-[10px] text-indigo-400 mt-0.5 flex items-center gap-1"><i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Will be compressed to WebP</p>
+                            </div>
+                            <button type="button" onclick="clearImagePick()" class="text-slate-500 hover:text-rose-400 transition p-1.5 shrink-0" title="Remove image">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- Upload progress -->
+                        <div id="img-progress-wrap" class="hidden space-y-1">
+                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div id="img-progress-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width:0%"></div>
+                            </div>
+                            <p id="img-progress-label" class="text-[10px] text-slate-500 text-right"></p>
+                        </div>
+                    </div>
+                    <!-- ── / IMAGE ATTACH ────────────────────────────── -->
+
+                    <button type="button" id="btn-submit-ticket" onclick="submitTicket()" class="mt-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm px-5 py-3 shadow-lg flex justify-center items-center gap-2 transition active:scale-[0.98]">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Ticket
+                    </button>
+                    <button type="button" onclick="setCategory('Technical','Technical / Portal'); document.getElementById('ticket-title').focus();" class="text-xs text-rose-400 hover:text-rose-300 border border-slate-700 p-2.5 rounded-xl hover:bg-rose-500/10 flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-bug"></i> Report a Bug
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Feed -->
+        <div class="lg:col-span-3 flex flex-col" style="min-height:85vh;">
+            <div class="glass-card rounded-2xl flex flex-col overflow-hidden border border-slate-800 shadow-xl h-full">
+
+                <!-- Feed Header -->
+                <div class="p-5 border-b border-slate-800 bg-slate-950/60 flex flex-col gap-4 shrink-0">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <i class="fa-solid fa-ticket-simple"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-white text-base tracking-tight">Support Desk</h2>
+                                <p class="text-xs text-slate-500"><span id="ticket-count">0</span> tickets in queue</p>
+                            </div>
+                        </div>
+                        <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl w-full sm:w-auto">
+                            <button class="status-filter-btn active flex-1 sm:flex-none text-xs font-semibold px-3 py-1.5 rounded-lg transition" data-filter="all">All</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="open">Open</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="closed">Closed</button>
+                            <button class="status-filter-btn flex-1 sm:flex-none text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white" data-filter="mine">Mine</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 border-t border-slate-800 pt-4 overflow-x-auto pb-0.5">
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="tickets">Tickets</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="updates">Updates</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="dashboard">Dashboard</button>
+                        <button id="nav-admin-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="admin">Admin</button>
+                        <button id="nav-mywork-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="mywork"><i class="fa-solid fa-briefcase mr-1 text-[9px]"></i>My Work</button>
+                        <button id="nav-labstatus-btn" class="nav-tab-btn hidden-safely text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="labstatus"><i class="fa-solid fa-flask-vial mr-1 text-[9px]"></i>Lab Status</button>
+                        <button class="nav-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-slate-800 whitespace-nowrap" data-view="resources">Resources</button>
+                        <button class="nav-tab-btn active text-xs font-medium px-3 py-1.5 rounded-lg transition whitespace-nowrap" data-view="about">About</button>
+                    </div>
+                </div>
+
+                <!-- Tickets View -->
+                <div id="view-tickets" class="hidden-safely flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4">
+                    <div id="loading-feed" class="text-center py-20 text-indigo-400">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                        <p class="text-sm font-medium text-slate-400">Connecting to database...</p>
+                    </div>
+                    <div id="tickets-list" class="flex flex-col gap-4"></div>
+                </div>
+
+                <!-- Updates View -->
+                <div id="view-updates" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="admin-post-box" class="hidden-safely mb-5 bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                        <p class="text-xs text-indigo-300 font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-indigo-400"></i> Post Announcement
+                        </p>
+                        <textarea id="announcement-text" maxlength="800" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm p-3 rounded-lg resize-none mb-3" rows="3" placeholder="Write announcement..."></textarea>
+
+                        <!-- Tabs: Attach / Poll -->
+                        <div class="flex gap-1 mb-3 bg-slate-900 border border-slate-800 p-1 rounded-xl w-fit">
+                            <button id="ann-tab-media" onclick="switchAnnTab('media')" class="ann-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition bg-slate-700 text-white">
+                                <i class="fa-solid fa-paperclip mr-1"></i> Attach
+                            </button>
+                            <button id="ann-tab-poll" onclick="switchAnnTab('poll')" class="ann-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-chart-bar mr-1"></i> Poll
+                            </button>
+                        </div>
+
+                        <!-- Media Attach Panel -->
+                        <div id="ann-media-panel" class="mb-3 space-y-2">
+                            <label for="ann-file-input" id="ann-drop-zone" class="ann-media-drop flex flex-col items-center gap-1 cursor-pointer"
+                                ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                                ondragleave="this.classList.remove('drag-over')"
+                                ondrop="event.preventDefault(); this.classList.remove('drag-over'); if(event.dataTransfer.files[0]){ document.getElementById('ann-file-input').files=event.dataTransfer.files; handleAnnFilePick(document.getElementById('ann-file-input')); }">
+                                <i class="fa-solid fa-cloud-arrow-up text-xl text-slate-600"></i>
+                                <span class="text-xs text-slate-500">Click or drag — Image or PDF</span>
+                                <span class="text-[10px] text-slate-600">JPG · PNG · WEBP · PDF (max 10 MB)</span>
+                            </label>
+                            <input type="file" id="ann-file-input" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" class="hidden" onchange="handleAnnFilePick(this)">
+                            <div id="ann-file-preview" class="hidden flex items-center gap-3 bg-slate-800/70 border border-slate-700 rounded-xl p-3">
+                                <div id="ann-file-icon" class="w-12 h-12 flex items-center justify-center rounded-lg border border-slate-600 shrink-0 bg-slate-900 text-indigo-400 text-2xl"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p id="ann-file-name" class="text-xs font-semibold text-slate-200 truncate"></p>
+                                    <p id="ann-file-size" class="text-[10px] text-slate-500 mt-0.5"></p>
+                                </div>
+                                <button type="button" onclick="clearAnnFile()" class="text-slate-500 hover:text-rose-400 transition p-1 shrink-0">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div id="ann-upload-progress" class="hidden space-y-1">
+                                <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                    <div id="ann-progress-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width:0%"></div>
+                                </div>
+                                <p id="ann-progress-label" class="text-[10px] text-slate-500 text-right"></p>
+                            </div>
+                        </div>
+
+                        <!-- Poll Panel -->
+                        <div id="ann-poll-panel" class="hidden-safely mb-3 space-y-2">
+                            <input id="poll-question" type="text" maxlength="150" placeholder="Poll question..." class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm p-2.5 rounded-lg transition">
+                            <div id="poll-options-list" class="space-y-1.5">
+                                <div class="poll-option-row">
+                                    <input type="text" maxlength="80" placeholder="Option 1" class="poll-opt flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs p-2 rounded-lg transition">
+                                    <button type="button" onclick="removePollOption(this)" class="text-slate-600 hover:text-rose-400 transition p-1"><i class="fa-solid fa-minus text-xs"></i></button>
+                                </div>
+                                <div class="poll-option-row">
+                                    <input type="text" maxlength="80" placeholder="Option 2" class="poll-opt flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs p-2 rounded-lg transition">
+                                    <button type="button" onclick="removePollOption(this)" class="text-slate-600 hover:text-rose-400 transition p-1"><i class="fa-solid fa-minus text-xs"></i></button>
+                                </div>
+                            </div>
+                            <button type="button" onclick="addPollOption()" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
+                                <i class="fa-solid fa-plus text-[10px]"></i> Add Option
+                            </button>
+                        </div>
+
+                        <button type="button" onclick="postAnnouncement()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Post Update
+                        </button>
+                    </div>
+                    <div id="updates-feed" class="space-y-4"></div>
+                </div>
+
+                <!-- Dashboard View -->
+                <div id="view-dashboard" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="dashboard-metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                </div>
+
+                <!-- Admin View -->
+                <div id="view-admin" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <h2 class="text-white font-bold text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-indigo-400"></i> Admin Control Center
+                    </h2>
+                    <div id="admin-controls"></div>
+                </div>
+<!-- Resources View -->
+<div id="view-resources" class="hidden-safely flex-1 overflow-y-auto p-5">
+    <h2 class="text-white font-bold text-base mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-folder-open text-amber-400"></i>
+        <i class="fa-solid fa-book-open text-indigo-400"></i>
+        Educational Resources
+    </h2>
+    <div id="resources-feed"></div>
+</div>
+                
+
+                <!-- My Work View -->
+                <div id="view-mywork" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="mywork-content"></div>
+                </div>
+
+                <!-- Lab Status View -->
+                <div id="view-labstatus" class="hidden-safely flex-1 overflow-y-auto p-5">
+                    <div id="labstatus-content"></div>
+                </div>
+
+                <!-- About View -->
+                <div id="view-about" class="flex-1 overflow-y-auto p-5">
+                    <div class="max-w-2xl mx-auto p-6 bg-slate-900 border border-slate-700 rounded-2xl shadow-xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                <i class="fa-solid fa-ticket-simple text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-white">BIT Updates</h2>
+                                <p class="text-indigo-400 text-sm font-medium">Student Support Portal</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-slate-300 text-sm leading-relaxed mb-6">
+                            <p>A centralized platform designed to streamline student communication at BIT Wardha. Submit academic or technical queries, track resolution, and stay informed with timely campus notices.</p>
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Student notes and queries
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-file-lines text-blue-400"></i> Notices and circulars
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-book text-emerald-400"></i> Syllabus updates
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300">
+                                    <i class="fa-solid fa-graduation-cap text-purple-400"></i> Exam and results
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-3 flex items-center gap-2 text-xs text-slate-300 col-span-2">
+                                    <i class="fa-solid fa-clock text-amber-400"></i> Deadlines and academic information
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-900/20 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                            <p class="text-xs text-slate-400 leading-relaxed">This platform is independently developed and not officially affiliated with DBATU. For final academic decisions, rely on official university channels.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/919970182686?text=Hi%20BIT%20Updates,%20I%20have%20a%20student%20query." target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-40" aria-label="WhatsApp">
+    <div class="bg-emerald-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-xl shadow-emerald-600/40 hover:bg-emerald-500 transition pulse-btn">
+        <i class="fa-brands fa-whatsapp"></i>
+    </div>
+</a>
+
+<footer class="text-center p-8 text-slate-600 text-xs border-t border-slate-900 bg-slate-950">
+    <p>&copy; 2026 BIT Updates. All rights reserved.</p>
+    <p class="mt-1 text-slate-700">Not affiliated with DBATU. For informational purposes only.</p>
+    <div class="flex justify-center gap-6 mt-4 flex-wrap">
+        <a href="https://instagram.com/spotify.piux" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        <a href="https://linkedin.com/in/piyush-deshkar" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+        <a href="https://github.com/archiusx" target="_blank" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-brands fa-github"></i> GitHub</a>
+        <a href="mailto:bitupdates@bitwardha.ac.in" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="terms-and-services.html" class="hover:text-indigo-400 transition flex items-center gap-1"><i class="fa-solid fa-file-contract"></i> Terms</a>
+    </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import {
+    getAuth, signInWithPopup, signInWithRedirect, getRedirectResult,
+    GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+    getFirestore, doc, getDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import {
+    getDatabase, ref as rtdbRef, push, set as rtdbSet, onValue,
+    update as rtdbUpdate, remove as rtdbRemove, get as rtdbGet,
+    query as rtdbQuery, orderByChild as rtdbOrderByChild, limitToLast
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+
+// ── CONFIG ───────────────────────────────────────────────────────────
+const firebaseConfig = {
+    apiKey: "AIzaSyDAwty9lfGsj-hAf1QffMJLtvUfhdd_SPI",
+    authDomain: "loginx-897b3.firebaseapp.com",
+    databaseURL: "https://loginx-897b3-default-rtdb.firebaseio.com",
+    projectId: "loginx-897b3",
+    storageBucket: "loginx-897b3.firebasestorage.app",
+    messagingSenderId: "380291415413",
+    appId: "1:380291415413:web:6d222db905e4457e29e73c",
+    measurementId: "G-BM6PMDKN5V"
+};
+
+const ADMIN_EMAILS          = ["co.2024.prdeshkar@bitwardha.ac.in", "class11art@gmail.com"];
+const TICKETS_COLLECTION    = "support_tickets";       // RTDB
+const ANNOUNCEMENTS_PATH    = "announcements";          // RTDB (was Firestore)
+const NOTIFICATIONS_PATH    = "notifications";          // RTDB (was Firestore)
+const USERS_COLLECTION      = "users";                 // Firestore (profile data)
+const MEMBERS_PATH          = "members";               // RTDB — staff/faculty roster
+const LAB_EQUIPMENT_PATH    = "lab_equipment";          // RTDB — lab equipment status
+const PERSONAL_NOTIF_PATH   = "personal_notifications"; // RTDB — per-email notifications
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const rtdb = getDatabase(app);
+
+// ── STATE ────────────────────────────────────────────────────────────
+let currentUser   = null;
+let userCache     = {};
+let isAdmin       = false;
+let allTickets    = [];
+let allUpdates    = [];
+let currentStatusFilter = 'all';
+let currentView   = 'about';
+let editTicketId  = null;
+let unsubTickets  = null;
+let unsubAnnounce = null;
+let unsubMembers  = null;
+let assignCallback = null;
+let allMembers     = [];  // { id, name, role, email, status } — loaded from RTDB
+let currentMember  = null; // { id, name, role, email } — matched member for logged-in user
+let ticketsReady  = false; // true after first RTDB snapshot
+
+// ── IMAGE UPLOAD STATE ────────────────────────────────────────────────
+let pendingImageFile  = null;   // File object staged for upload
+let pendingImageURL   = null;   // Object URL for preview
+// Upload queue / load-balancer state
+const uploadQueue     = [];     // { file, ticketId, resolve, reject, retries }
+let   activeUploads   = 0;
+const MAX_CONCURRENT  = 2;      // max parallel Firebase Storage uploads
+const MAX_RETRIES     = 3;
+const RETRY_DELAYS    = [2000, 5000, 12000]; // exponential back-off ms
+// Per-user throttle: max 5 uploads per 60 s
+const uploadLog       = [];     // timestamps of completed uploads
+const USER_RATE_LIMIT = 5;
+const RATE_WINDOW_MS  = 60_000;
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function escHTML(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]||t));
+}
+function timeAgo(ts) {
+    if (!ts) return 'just now';
+    const s = Math.floor((Date.now() - (ts.toMillis ? ts.toMillis() : ts)) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+}
+function catColor(cat) {
+    const m = {
+        Academic: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+        Exam:     'bg-purple-500/20 text-purple-400 border-purple-500/30',
+        Technical:'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        Circular: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        General:  'bg-slate-700/60 text-slate-300 border-slate-600',
+        Maintenance:'bg-orange-500/20 text-orange-400 border-orange-500/30',
+        Other:    'bg-rose-500/20 text-rose-400 border-rose-500/30'
+    };
+    return m[cat] || 'bg-slate-700/60 text-slate-300 border-slate-600';
+}
+function catIcon(cat) {
+    const m = {
+        Academic:'fa-book', Exam:'fa-graduation-cap', Technical:'fa-wrench',
+        Circular:'fa-file-lines', General:'fa-circle-dot',
+        Maintenance:'fa-screwdriver-wrench', Other:'fa-triangle-exclamation'
+    };
+    return m[cat] || 'fa-tag';
+}
+function statusColor(s) {
+    return s === 'closed'
+        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+        : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+}
+
+const DEPT_ROUTING = {
+    Academic:'Academic Office', Exam:'Examination Cell', Technical:'IT Department',
+    Circular:'Administration', Maintenance:'Maintenance Dept.',
+    General:'Student Affairs', Other:'Support Team'
+};
+
+async function aiRouteDepartment(title, desc, category) {
+    try {
+        const { GoogleGenAI } = await import('https://esm.sh/@google/genai@1.29.0');
+        const ai = new GoogleGenAI({ apiKey: 'AIzaSyDAwty9lfGsj-hAf1QffMJLtvUfhdd_SPI' });
+        const prompt = `You are a college support ticket router. Given this ticket, return ONLY a JSON object like {"department":"X","priority":"high/medium/low","reason":"short reason"}.
+Departments: Academic Office, Examination Cell, IT Department, Administration, Maintenance Dept., Student Affairs, Support Team.
+Category: ${category}
+Title: ${title}
+Description: ${desc}`;
+        const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt });
+        const text = result.text.replace(/```json|```/g,'').trim();
+        return JSON.parse(text);
+    } catch(e) {
+        return { department: DEPT_ROUTING[category] || 'Support Team', priority: 'medium', reason: 'Auto-routed by category' };
+    }
+}
+
+function startCronJobs() {
+    setInterval(() => {
+        if (!isAdmin) return;
+        const overdueThreshold = 48 * 60 * 60 * 1000;
+        const now = Date.now();
+        allTickets.forEach(t => {
+            if ((t.status||'open') === 'open' && t.taskStatus === 'pending' && t.assignedTo) {
+                if (now - (t.createdAt||now) > overdueThreshold) {
+                    pushNotification('warn','Overdue Task',`"${t.title}" assigned to ${t.assignedTo} is overdue.`,'fa-clock');
+                }
+            }
+        });
+    }, 15 * 60 * 1000);
+}
+
+window.acceptTask = async function(ticketId) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { taskStatus:'accepted', taskAcceptedAt:Date.now(), updatedAtMs:Date.now() });
+        pushNotification('success','Task Accepted','Task accepted successfully.','fa-circle-check');
+        showToast('Task accepted.');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.rejectTask = async function(ticketId) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { taskStatus:'rejected', assignedTo:null, assignedToUid:null, updatedAtMs:Date.now() });
+        pushNotification('warn','Task Rejected','Task was rejected and unassigned.','fa-circle-xmark');
+        showToast('Task rejected.');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.markTaskDone = async function(ticketId) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { taskStatus:'done', taskDoneAt:Date.now(), updatedAtMs:Date.now() });
+        showToast('Task marked done. Awaiting feedback.');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.submitConfirmationPhoto = async function(ticketId) {
+    const input = document.getElementById(`confirm-photo-${ticketId}`);
+    if (!input?.files?.[0]) { showToast('Select a photo first.', 'error'); return; }
+    try {
+        const compressed = await compressImage(input.files[0]);
+        const result = await enqueueUpload(compressed, `confirm_${ticketId}`, ()=>{});
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { confirmationPhotoURL:result.url, confirmationAt:Date.now(), taskStatus:'confirmed', updatedAtMs:Date.now() });
+        showToast('Confirmation photo uploaded.');
+    } catch(e) { showToast('Upload failed: ' + e.message, 'error'); }
+};
+
+window.submitFeedback = async function(ticketId) {
+    const active = document.querySelector(`[data-fb-ticket="${ticketId}"].fb-star-active`);
+    const ratingVal = active ? parseInt(active.dataset.fbRating) : 0;
+    const comment = document.getElementById(`fb-comment-${ticketId}`)?.value.trim();
+    if (!ratingVal) { showToast('Please select a rating.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { feedback:{ rating:ratingVal, comment:comment||'', submittedAt:Date.now(), by:currentUser?.uid } });
+        showToast('Feedback submitted. Thank you!');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.setFeedbackStar = function(ticketId, val) {
+    document.querySelectorAll(`[data-fb-ticket="${ticketId}"]`).forEach(el => {
+        const r = parseInt(el.dataset.fbRating);
+        el.classList.toggle('fb-star-active', r <= val);
+        el.classList.toggle('text-amber-400', r <= val);
+        el.classList.toggle('text-slate-600', r > val);
+    });
+};
+// IMAGE UPLOAD ENGINE — Cloudinary (free) + load balancer + throttle + retry
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Cloudinary config (free unsigned upload) ──────────────────────────
+// FREE TIER: 25 GB storage · 25 GB bandwidth/month · no credit card
+// Setup: cloudinary.com → Settings → Upload → Add unsigned preset
+const CLOUDINARY_CLOUD  = 'dzepoqldk';
+const CLOUDINARY_PRESET = 'bit_updates';      // ← replace with your unsigned preset name
+const CLOUDINARY_URL    = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`;
+
+/** Validate file before anything else */
+function validateImageFile(file) {
+    const ALLOWED = ['image/jpeg','image/png','image/webp','image/gif'];
+    const MAX_MB  = 5;
+    if (!ALLOWED.includes(file.type))
+        return 'Only JPG, PNG, WEBP or GIF images are allowed.';
+    if (file.size > MAX_MB * 1024 * 1024)
+        return `Image must be under ${MAX_MB} MB (yours: ${(file.size/1048576).toFixed(1)} MB).`;
+    return null;
+}
+
+/** Client-side rate-limit check */
+function isRateLimited() {
+    const now = Date.now();
+    while (uploadLog.length && now - uploadLog[0] > RATE_WINDOW_MS) uploadLog.shift();
+    return uploadLog.length >= USER_RATE_LIMIT;
+}
+
+/** Compress + resize client-side before upload (saves Cloudinary bandwidth) */
+function compressImage(file, maxPx = 1280, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxPx || height > maxPx) {
+                const ratio = Math.min(maxPx / width, maxPx / height);
+                width  = Math.round(width  * ratio);
+                height = Math.round(height * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            canvas.toBlob(blob => {
+                if (!blob) { reject(new Error('Compression failed')); return; }
+                resolve(new File([blob], 'upload.webp', { type: 'image/webp' }));
+            }, 'image/webp', quality);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Invalid image')); };
+        img.src = url;
+    });
+}
+
+/**
+ * Upload to Cloudinary via XHR (gives us real upload progress events).
+ * Returns Promise<{ url, publicId }>
+ */
+function doUpload(file, ticketId, onProgress, retryCount = 0) {
+    return new Promise((resolve, reject) => {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('upload_preset', CLOUDINARY_PRESET);
+        // Tag images so you can bulk-manage them in Cloudinary dashboard
+        fd.append('tags', `bit_updates,ticket_${ticketId},uid_${currentUser.uid.slice(-8)}`);
+        // Store in a dedicated folder
+        fd.append('folder', 'bit_updates/tickets');
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', CLOUDINARY_URL, true);
+
+        // Real upload progress
+        xhr.upload.onprogress = e => {
+            if (e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                onProgress(pct, 'uploading');
+            }
+        };
+
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    uploadLog.push(Date.now());
+                    resolve({ url: res.secure_url, publicId: res.public_id });
+                } catch(e) { reject(new Error('Invalid Cloudinary response')); }
+            } else {
+                // 4xx = permanent failure (wrong preset, quota, etc.)
+                let errMsg = `Upload failed (HTTP ${xhr.status})`;
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    errMsg = res.error?.message || errMsg;
+                } catch(_) {}
+                // Retry only on 5xx server errors
+                if (xhr.status >= 500 && retryCount < MAX_RETRIES) {
+                    const delay = RETRY_DELAYS[retryCount] || 15000;
+                    onProgress(-1, 'retrying', retryCount + 1, delay);
+                    setTimeout(() => {
+                        doUpload(file, ticketId, onProgress, retryCount + 1).then(resolve).catch(reject);
+                    }, delay);
+                } else {
+                    reject(new Error(errMsg));
+                }
+            }
+        };
+
+        xhr.onerror = () => {
+            // Network error — retry with back-off
+            if (retryCount < MAX_RETRIES) {
+                const delay = RETRY_DELAYS[retryCount] || 15000;
+                onProgress(-1, 'retrying', retryCount + 1, delay);
+                setTimeout(() => {
+                    doUpload(file, ticketId, onProgress, retryCount + 1).then(resolve).catch(reject);
+                }, delay);
+            } else {
+                reject(new Error('Network error after ' + MAX_RETRIES + ' retries.'));
+            }
+        };
+
+        xhr.ontimeout = () => reject(new Error('Upload timed out.'));
+        xhr.timeout   = 60_000; // 60 s hard timeout per attempt
+
+        xhr.send(fd);
+    });
+}
+
+/** Load-balancer: drain the queue respecting MAX_CONCURRENT */
+function drainUploadQueue() {
+    while (activeUploads < MAX_CONCURRENT && uploadQueue.length) {
+        const job = uploadQueue.shift();
+        activeUploads++;
+        job.run().finally(() => { activeUploads--; drainUploadQueue(); });
+    }
+}
+
+/**
+ * Public API — enqueue an upload job.
+ * Returns Promise<{ url, publicId }>
+ */
+function enqueueUpload(file, ticketId, onProgress) {
+    return new Promise((resolve, reject) => {
+        const run = () => doUpload(file, ticketId, onProgress).then(resolve).catch(reject);
+        uploadQueue.push({ run });
+        drainUploadQueue();
+    });
+}
+
+// ── IMAGE PICKER UI HELPERS ───────────────────────────────────────────
+
+/** Called when user picks a file via the hidden input */
+window.handleImagePick = function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const err = validateImageFile(file);
+    if (err) { showToast(err, 'error'); input.value = ''; return; }
+
+    pendingImageFile = file;
+    if (pendingImageURL) URL.revokeObjectURL(pendingImageURL);
+    pendingImageURL  = URL.createObjectURL(file);
+
+    const preview  = document.getElementById('img-preview-wrap');
+    const thumb    = document.getElementById('img-thumb');
+    const nameEl   = document.getElementById('img-file-name');
+    const sizeEl   = document.getElementById('img-file-size');
+    thumb.src      = pendingImageURL;
+    nameEl.textContent = file.name.length > 26 ? file.name.slice(0,24)+'…' : file.name;
+    sizeEl.textContent = `${(file.size/1048576).toFixed(1)} MB`;
+    preview.classList.remove('hidden');
+    document.getElementById('img-progress-wrap').classList.add('hidden');
+};
+
+window.clearImagePick = function() {
+    pendingImageFile = null;
+    if (pendingImageURL) { URL.revokeObjectURL(pendingImageURL); pendingImageURL = null; }
+    document.getElementById('img-preview-wrap').classList.add('hidden');
+    document.getElementById('img-progress-wrap').classList.add('hidden');
+    document.getElementById('img-file-input').value = '';
+};
+
+function setUploadProgress(pct, state, retry, delay) {
+    const wrap = document.getElementById('img-progress-wrap');
+    const bar  = document.getElementById('img-progress-bar');
+    const lbl  = document.getElementById('img-progress-label');
+    wrap.classList.remove('hidden');
+    if (state === 'retrying') {
+        bar.style.width = '0%';
+        bar.className   = 'h-full bg-amber-500 rounded-full transition-all duration-300';
+        lbl.textContent = `Retrying (attempt ${retry}/${MAX_RETRIES}) in ${delay/1000}s…`;
+    } else if (pct >= 0) {
+        bar.style.width = pct + '%';
+        bar.className   = 'h-full bg-indigo-500 rounded-full transition-all duration-300';
+        lbl.textContent = pct < 100 ? `Uploading… ${pct}%` : 'Processing…';
+    }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────
+window.showToast = function(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const colors = { success:'bg-slate-800 border-slate-700', error:'bg-rose-900/80 border-rose-500/50', info:'bg-indigo-900/80 border-indigo-500/50' };
+    const icons  = { success:'fa-check-circle text-emerald-400', error:'fa-circle-exclamation text-rose-400', info:'fa-circle-info text-indigo-400' };
+    toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border pointer-events-auto transform transition-all duration-300 translate-y-4 opacity-0 ${colors[type]||colors.success}`;
+    toast.innerHTML = `<i class="fa-solid ${icons[type]||icons.success} shrink-0"></i><p class="text-sm font-medium text-slate-200 leading-tight">${escHTML(message)}</p>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.remove('translate-y-4','opacity-0'));
+    setTimeout(() => { toast.classList.add('translate-y-4','opacity-0'); setTimeout(() => toast.remove(), 350); }, 4000);
+};
+
+// ── CONFIRM ───────────────────────────────────────────────────────────
+window.showConfirm = function(title, msg, onConfirm) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-msg').textContent   = msg;
+    const dialog = document.getElementById('confirm-dialog');
+    dialog.classList.remove('hidden-safely');
+    const ok  = document.getElementById('confirm-ok');
+    const can = document.getElementById('confirm-cancel');
+    const cls = () => dialog.classList.add('hidden-safely');
+    ok.onclick  = () => { cls(); onConfirm(); };
+    can.onclick = cls;
+};
+
+// ── ASSIGN MODAL ──────────────────────────────────────────────────────
+window.closeAssignModal = function() {
+    document.getElementById('assign-modal').classList.add('hidden-safely');
+    document.getElementById('assign-modal-input').value = '';
+    document.getElementById('assign-modal-select').value = '';
+    assignCallback = null;
+};
+
+function populateAssignDropdown() {
+    const sel = document.getElementById('assign-modal-select');
+    if (!sel) return;
+    const approved = allMembers.filter(m => m.status === 'approved');
+    const roleOrder = ['Principal','HOD','Faculty','Technician','Lab Assistant'];
+    const grouped = {};
+    roleOrder.forEach(r => { grouped[r] = []; });
+    approved.forEach(m => {
+        const r = m.role || 'Other';
+        if (!grouped[r]) grouped[r] = [];
+        grouped[r].push(m);
+    });
+    let html = '<option value="">— Choose from registered members —</option>';
+    roleOrder.forEach(role => {
+        if (grouped[role] && grouped[role].length) {
+            html += `<optgroup label="${role}">`;
+            grouped[role].forEach(m => {
+                html += `<option value="${m.id}" data-email="${m.email||''}" data-name="${m.name}">${m.name}${m.email ? ' &lt;'+m.email+'&gt;' : ''}</option>`;
+            });
+            html += '</optgroup>';
+        }
+    });
+    if (approved.length === 0) {
+        html += '<option disabled value="">No approved members yet — add them in Admin panel</option>';
+    }
+    sel.innerHTML = html;
+}
+
+function openAssignModal(label, cb) {
+    document.getElementById('assign-modal-target').textContent = label;
+    document.getElementById('assign-modal-input').value = '';
+    populateAssignDropdown();
+    document.getElementById('assign-modal').classList.remove('hidden-safely');
+    assignCallback = cb;
+    document.getElementById('assign-modal-select').focus();
+}
+
+document.getElementById('assign-modal-submit').onclick = function() {
+    const sel      = document.getElementById('assign-modal-select');
+    const inputVal = document.getElementById('assign-modal-input').value.trim();
+    if (sel.value) {
+        // Dropdown selection — resolve full member object
+        const memberId = sel.value;
+        const member   = allMembers.find(m => m.id === memberId);
+        if (member) {
+            if (assignCallback) assignCallback({ name: member.name, email: member.email || '', memberId: member.id });
+        } else {
+            if (assignCallback) assignCallback({ name: inputVal, email: '', memberId: '' });
+        }
+    } else if (inputVal) {
+        if (assignCallback) assignCallback({ name: inputVal, email: '', memberId: '' });
+    }
+    closeAssignModal();
+};
+
+// Clear assignment button — removes the current assignment from a ticket
+window._clearAssignment = function() {
+    if (assignCallback) assignCallback('');
+    closeAssignModal();
+};
+
+// ── AUTH ──────────────────────────────────────────────────────────────
+function setLoginBtnState(loading) {
+    const gBtn = document.getElementById('btn-google-signin');
+    const aBtn = document.getElementById('btn-anon-signin');
+    gBtn.disabled = aBtn.disabled = loading;
+    gBtn.innerHTML = loading
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> <span>Authenticating...</span>'
+        : '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google"> <span>Sign in with Google</span>';
+}
+
+document.getElementById('btn-google-signin').onclick = async function() {
+    setLoginBtnState(true);
+    document.getElementById('login-error').classList.add('hidden-safely');
+    try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (e) {
+        if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+            try { await signInWithRedirect(auth, new GoogleAuthProvider()); }
+            catch(e2) { showLoginError(e2.message); setLoginBtnState(false); }
+        } else { showLoginError(e.message||'Sign-in failed.'); setLoginBtnState(false); }
+    }
+};
+document.getElementById('btn-anon-signin').onclick = async function() {
+    setLoginBtnState(true);
+    document.getElementById('login-error').classList.add('hidden-safely');
+    try { await signInAnonymously(auth); }
+    catch(e) { showLoginError('Guest sign-in failed. '+e.message); setLoginBtnState(false); }
+};
+document.getElementById('btn-logout-modal').onclick = () => signOut(auth);
+getRedirectResult(auth).catch(e => console.warn('Redirect:', e));
+
+function showLoginError(msg) {
+    const el = document.getElementById('login-error');
+    el.textContent = msg;
+    el.classList.remove('hidden-safely');
+}
+
+// ── AUTH STATE ────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+        const email = (user.email||'').toLowerCase().trim();
+        isAdmin = ADMIN_EMAILS.includes(email);
+
+        document.getElementById('login-screen').classList.add('hidden-safely');
+        document.getElementById('main-app').classList.remove('hidden-safely');
+        document.getElementById('user-name').textContent = user.displayName || 'Student';
+
+        if (isAdmin) {
+            document.getElementById('admin-badge').classList.remove('hidden-safely');
+            document.getElementById('admin-profile-badge').classList.remove('hidden-safely');
+            document.getElementById('nav-admin-btn').classList.remove('hidden-safely');
+            document.getElementById('admin-post-box').classList.remove('hidden-safely');
+            document.getElementById('notif-send-form').classList.remove('hidden-safely');
+            showToast('Administrator access granted.', 'info');
+            // Re-render after admin flag confirmed to show admin actions on ticket cards
+            setTimeout(() => {
+                if (currentView === 'tickets') renderTickets();
+                else if (currentView === 'admin') renderAdminView();
+            }, 400);
+        } else {
+            showToast(`Welcome, ${user.displayName || 'Student'}!`);
+        }
+
+        await loadUserData(user.uid);
+        startCronJobs();
+        startListeners();
+        switchView('about');
+    } else {
+        currentUser = null; isAdmin = false; userCache = {};
+        allTickets = []; allUpdates = []; ticketsReady = false;
+        document.getElementById('login-screen').classList.remove('hidden-safely');
+        document.getElementById('main-app').classList.add('hidden-safely');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+        document.getElementById('admin-badge').classList.add('hidden-safely');
+        document.getElementById('admin-profile-badge').classList.add('hidden-safely');
+        document.getElementById('nav-admin-btn').classList.add('hidden-safely');
+        document.getElementById('notif-send-form').classList.add('hidden-safely');
+        document.getElementById('admin-post-box').classList.add('hidden-safely');
+        document.getElementById('notif-panel').classList.add('hidden-safely');
+        if (unsubTickets)       { unsubTickets();       unsubTickets       = null; }
+        if (unsubAnnounce)      { unsubAnnounce();      unsubAnnounce      = null; }
+        if (unsubNotifications) { unsubNotifications(); unsubNotifications = null; }
+        if (unsubMembers)       { unsubMembers();       unsubMembers       = null; }
+        allNotifications = [];
+        allUpdates = [];
+        allMembers = [];
+        currentMember = null;
+        document.getElementById('nav-mywork-btn')?.classList.add('hidden-safely');
+        document.getElementById('nav-labstatus-btn')?.classList.add('hidden-safely');
+        document.getElementById('member-role-badge')?.classList.add('hidden-safely');
+        setLoginBtnState(false);
+    }
+});
+
+// ── LOAD USER PROFILE ─────────────────────────────────────────────────
+// FIX: localStorage-first for instant load + permanent persistence
+async function loadUserData(uid) {
+    try {
+        const cached = localStorage.getItem('bitup_profile_' + uid);
+        if (cached) {
+            userCache = JSON.parse(cached);
+            if (userCache.displayName) document.getElementById('user-name').textContent = userCache.displayName;
+        }
+    } catch(e) {}
+    try {
+        const snap = await getDoc(doc(db, USERS_COLLECTION, uid));
+        if (snap.exists()) {
+            userCache = { ...userCache, ...snap.data() };
+            if (userCache.displayName) document.getElementById('user-name').textContent = userCache.displayName;
+            localStorage.setItem('bitup_profile_' + uid, JSON.stringify(userCache));
+        }
+    } catch(e) { console.warn('Profile sync error:', e); }
+}
+
+// ── PROFILE MODAL ─────────────────────────────────────────────────────
+document.getElementById('btn-menu').onclick = () => {
+    // Re-read from localStorage as fallback to ensure freshest data
+    try {
+        const stored = localStorage.getItem('bitup_profile_' + currentUser?.uid);
+        if (stored) userCache = { ...userCache, ...JSON.parse(stored) };
+    } catch(e) {}
+    document.getElementById('prof-name').value   = userCache.displayName || currentUser?.displayName || '';
+
+    const isStaff = !!currentMember && !isAdmin;
+    // Hide student fields for staff members
+    ['prof-prn','prof-branch','prof-sem'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.closest('div')?.classList.toggle('hidden-safely', isStaff);
+    });
+    document.getElementById('prof-prn').value    = userCache.prn || '';
+    document.getElementById('prof-branch').value = userCache.branch || '';
+    document.getElementById('prof-sem').value    = userCache.semester || '';
+
+    // Populate role badge
+    updateMemberRoleUI();
+
+    document.getElementById('profile-modal').classList.remove('hidden-safely');
+};
+document.getElementById('btn-close-modal').onclick = () =>
+    document.getElementById('profile-modal').classList.add('hidden-safely');
+
+// FIX: Save profile — localStorage + Firestore, fix stuck "Saving..." button
+document.getElementById('btn-save-profile').onclick = async function() {
+    if (!currentUser) return;
+    const name = document.getElementById('prof-name').value.trim();
+    if (!name) { showToast('Name cannot be empty.', 'error'); return; }
+
+    const btn = this;
+    const resetBtn = () => {
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Save Profile';
+        btn.disabled  = false;
+    };
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+    btn.disabled  = true;
+
+    const data = {
+        uid:         currentUser.uid,
+        displayName: name,
+        prn:         document.getElementById('prof-prn').value.trim(),
+        branch:      document.getElementById('prof-branch').value.trim().toUpperCase(),
+        semester:    document.getElementById('prof-sem').value,
+        updatedAt:   serverTimestamp()
+    };
+
+    // Save to localStorage immediately so it persists regardless of Firestore result
+    const localData = { ...data };
+    delete localData.updatedAt;
+    userCache = { ...userCache, ...localData };
+    localStorage.setItem('bitup_profile_' + currentUser.uid, JSON.stringify(userCache));
+    document.getElementById('user-name').textContent = name;
+
+    try {
+        await setDoc(doc(db, USERS_COLLECTION, currentUser.uid), data, { merge: true });
+        showToast('Profile saved successfully.');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+    } catch(e) {
+        showToast('Saved locally. Firestore sync failed: ' + e.message, 'info');
+        document.getElementById('profile-modal').classList.add('hidden-safely');
+    } finally {
+        resetBtn();
+    }
+};
+
+// ── REALTIME LISTENERS ────────────────────────────────────────────────
+function startListeners() {
+    // ── Tickets (already RTDB) ────────────────────────────────────────
+    const tq = rtdbQuery(rtdbRef(rtdb, TICKETS_COLLECTION), rtdbOrderByChild('createdAtMs'), limitToLast(200));
+    unsubTickets = onValue(tq, snap => {
+        const rows = snap.val() || {};
+        allTickets = Object.entries(rows).map(([id, data]) => ({ id, ...data }))
+            .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+        ticketsReady = true;
+        if (currentView === 'tickets')   renderTickets();
+        if (currentView === 'dashboard') renderDashboard();
+        if (currentView === 'admin')     renderAdminView();
+        updateTicketCount();
+    }, err => {
+        console.error('Tickets error:', err);
+        document.getElementById('loading-feed').innerHTML =
+            `<div class="text-rose-400 text-center py-10 text-sm"><i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i><p>${escHTML(err.message)}</p></div>`;
+        document.getElementById('loading-feed').classList.remove('hidden-safely');
+    });
+
+    // ── Announcements (RTDB — instant, no index needed) ───────────────
+    unsubAnnounce = onValue(rtdbRef(rtdb, ANNOUNCEMENTS_PATH), snap => {
+        const rows = snap.val() || {};
+        allUpdates = Object.entries(rows)
+            .map(([id, data]) => ({ id, ...data }))
+            .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+        renderUpdatesView();
+    }, err => console.error('Announcements RTDB error:', err));
+
+    // ── Notifications (RTDB — instant) ────────────────────────────────
+    startNotifListener();
+
+    // ── Members roster (RTDB — instant) ───────────────────────────────
+    if (unsubMembers) { unsubMembers(); unsubMembers = null; }
+    unsubMembers = onValue(rtdbRef(rtdb, MEMBERS_PATH), snap => {
+        const rows = snap.val() || {};
+        allMembers = Object.entries(rows).map(([id, data]) => ({ id, ...data }));
+        detectMemberRole();
+        if (currentView === 'admin')     renderAdminView();
+        if (currentView === 'mywork')    renderMyWorkView();
+        if (currentView === 'labstatus') renderLabStatusView();
+    }, err => console.error('Members RTDB error:', err));
+}
+
+// ── VIEW SWITCHING ────────────────────────────────────────────────────
+document.querySelectorAll('.nav-tab-btn').forEach(btn =>
+    btn.addEventListener('click', () => switchView(btn.dataset.view))
+);
+function switchView(view) {
+    currentView = view;
+    ['tickets','updates','dashboard','admin','resources','about','mywork','labstatus'].forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden-safely', v !== view);
+    });
+    document.querySelectorAll('.nav-tab-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.view === view)
+    );
+    if (view === 'tickets')   renderTickets();
+    if (view === 'dashboard') renderDashboard();
+    if (view === 'admin')     renderAdminView();
+    if (view === 'updates')   renderUpdatesView();
+    if (view === 'resources') renderResourcesView();
+    if (view === 'mywork')    renderMyWorkView();
+    if (view === 'labstatus') renderLabStatusView();
+}
+
+document.querySelectorAll('.status-filter-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+        currentStatusFilter = btn.dataset.filter;
+        document.querySelectorAll('.status-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (currentView !== 'tickets') switchView('tickets');
+        else renderTickets();
+    })
+);
+
+function updateTicketCount() {
+    document.getElementById('ticket-count').textContent = filterTicketList().length;
+}
+// ── PRIVACY FILTER ────────────────────────────────────────────────────
+// Maintenance tickets: visible to all signed-in users.
+// All other tickets: only admin, ticket author, or assigned person.
+function isTicketVisible(t) {
+    if (!currentUser) return false;
+    if (t.category === 'Maintenance') return true;
+    if (isAdmin) return true;
+    if (t.authorId === currentUser.uid) return true;
+    if (t.assignedToUid === currentUser.uid) return true;
+    return false;
+}
+function filterTicketList() {
+    const visible = allTickets.filter(t => isTicketVisible(t));
+    if (currentStatusFilter === 'open')   return visible.filter(t => (t.status||'open') === 'open');
+    if (currentStatusFilter === 'closed') return visible.filter(t => t.status === 'closed');
+    if (currentStatusFilter === 'mine')   return visible.filter(t => t.authorId === currentUser?.uid);
+    return visible;
+}
+
+// ── RENDER TICKETS ────────────────────────────────────────────────────
+function renderTickets() {
+    const loadingEl = document.getElementById('loading-feed');
+    const list      = document.getElementById('tickets-list');
+
+    // Data hasn't arrived from RTDB yet — keep spinner visible
+    if (!ticketsReady) {
+        loadingEl.classList.remove('hidden-safely');
+        list.innerHTML = '';
+        document.getElementById('ticket-count').textContent = '…';
+        return;
+    }
+
+    loadingEl.classList.add('hidden-safely');
+    const tickets = filterTicketList();
+    document.getElementById('ticket-count').textContent = tickets.length;
+
+    if (!tickets.length) {
+        list.innerHTML = `<div class="text-center p-10 bg-slate-900/60 border border-slate-800 rounded-2xl">
+            <i class="fa-solid fa-inbox text-3xl text-slate-600 mb-3"></i>
+            <h3 class="text-white font-bold mb-1">No tickets found</h3>
+            <p class="text-sm text-slate-500">Queue is empty for this filter.</p>
+        </div>`;
+        return;
+    }
+    list.innerHTML = tickets.map(t => buildTicketCard(t)).join('');
+}
+
+function buildTicketCard(t) {
+    const isMine  = currentUser?.uid === t.authorId;
+    const status  = t.status || 'open';
+    // Privacy indicator: Maintenance = public, everything else = private
+    const isPublicTicket = t.category === 'Maintenance';
+    const privacyBadge = isPublicTicket
+        ? `<span class="text-[9px] bg-emerald-900/30 border border-emerald-600/30 text-emerald-400 px-2 py-0.5 rounded flex items-center gap-1" title="Visible to all users"><i class="fa-solid fa-eye text-[8px]"></i> Public</span>`
+        : `<span class="text-[9px] bg-slate-800 border border-slate-600/50 text-slate-400 px-2 py-0.5 rounded flex items-center gap-1" title="Only visible to you, admin, and assigned staff"><i class="fa-solid fa-lock text-[8px]"></i> Private</span>`;
+    const avatar  = t.authorPhoto
+        ? `<img src="${escHTML(t.authorPhoto)}" class="w-10 h-10 rounded-xl object-cover border border-slate-700" alt="avatar">`
+        : `<div class="w-10 h-10 rounded-xl bg-indigo-600/80 text-white flex items-center justify-center font-bold text-sm">${escHTML((t.authorName||'S')[0].toUpperCase())}</div>`;
+
+    const byLine = escHTML(t.authorName||'Unknown') +
+        (t.authorPRN ? ` <span class="font-mono text-[10px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded ml-1">${escHTML(t.authorPRN)}</span>` : '');
+    const assignedBadge = t.assignedTo
+        ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-300 px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-user-check text-indigo-400 text-[9px]"></i> ${escHTML(t.assignedTo)}</span>`
+        : '';
+    const deptBadge = t.department
+        ? `<span class="text-[10px] bg-cyan-900/40 border border-cyan-700/40 text-cyan-300 px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-sitemap text-[9px]"></i> ${escHTML(t.department)}</span>`
+        : '';
+    const aiPriorityBadge = t.aiPriority === 'high'
+        ? `<span class="text-[9px] bg-rose-500/20 border border-rose-500/30 text-rose-400 px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-fire text-[9px]"></i> HIGH</span>`
+        : (t.aiPriority === 'low' ? `<span class="text-[9px] bg-slate-700/40 border border-slate-600 text-slate-400 px-2 py-0.5 rounded">LOW</span>` : '');
+    const taskStatusMap  = { pending:'text-amber-400 fa-hourglass-half', accepted:'text-emerald-400 fa-circle-check', rejected:'text-rose-400 fa-circle-xmark', done:'text-blue-400 fa-flag-checkered', confirmed:'text-purple-400 fa-camera' };
+    const taskLabelMap   = { pending:'Pending',accepted:'Accepted',rejected:'Rejected',done:'Done – Awaiting Confirm',confirmed:'Confirmed' };
+    const ts = t.workStatus || (t.taskStatus || null);
+    const taskBadge = (t.assignedTo && ts)
+        ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-300 px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid ${(taskStatusMap[ts]||'fa-hourglass-half text-slate-400').split(' ').slice(1).join(' ')} ${(taskStatusMap[ts]||'text-slate-400 fa-hourglass-half').split(' ')[0]} text-[9px]"></i> ${taskLabelMap[ts]||ts}</span>`
+        : '';
+    let replyHTML = '';
+
+// ✅ Normalize comments (Firebase object → array)
+let commentsArr = [];
+if (t.comments) {
+    commentsArr = Object.values(t.comments);
+}
+
+// ✅ Separate admin + user comments
+const adminReplies = commentsArr.filter(c => c.isAdmin);
+const userComments = commentsArr.filter(c => !c.isAdmin);
+
+// 🔹 Admin Replies (highlighted)
+adminReplies.forEach(c => {
+    replyHTML += `<div class="mt-4 bg-indigo-950/50 border border-indigo-800/50 p-4 rounded-xl relative">
+        <div class="absolute left-0 top-0 w-1 h-full bg-indigo-500 rounded-l-xl"></div>
+        <div class="flex items-center gap-2 mb-2 ml-3">
+            <i class="fa-solid fa-shield-check text-indigo-400 text-xs"></i>
+            <span class="text-[10px] font-extrabold text-indigo-300 uppercase tracking-widest">Admin Response</span>
+        </div>
+        <p class="text-sm text-slate-200 leading-relaxed ml-3 whitespace-pre-wrap">${escHTML(c.text)}</p>
+    </div>`;
+});
+
+// 🔹 User Comments
+userComments.forEach(c => {
+    replyHTML += `<div class="mt-3 bg-slate-800/60 border border-slate-700 p-3 rounded-xl">
+        <div class="text-[10px] font-semibold text-slate-400 mb-1 flex items-center gap-1">
+            <i class="fa-regular fa-comment-dots"></i> ${escHTML(c.authorName || "User")}
+        </div>
+        <p class="text-xs text-slate-300 whitespace-pre-wrap">${escHTML(c.text)}</p>
+    </div>`;
+});
+
+
+// ================= ACTIONS =================
+
+let adminActions = '';
+let inputArea = '';
+
+if (isAdmin) {
+    const toggleLabel = status === 'open' ? 'Mark Resolved' : 'Re-open';
+    const toggleIcon  = status === 'open' ? 'fa-check' : 'fa-rotate-left';
+    const newStatus   = status === 'open' ? 'closed' : 'open';
+    const taskActions = t.assignedTo && ts === 'pending' ? `
+        <button onclick="setWorkStatus('${t.id}','accepted')" class="text-[10px] bg-slate-900 border border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold"><i class="fa-solid fa-circle-check"></i> Accept</button>
+        <button onclick="setWorkStatus('${t.id}','rejected')" class="text-[10px] bg-slate-900 border border-rose-500/40 hover:bg-rose-500/20 text-rose-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold"><i class="fa-solid fa-circle-xmark"></i> Reject</button>` : '';
+    const doneAction = t.assignedTo && ts === 'accepted' ? `
+        <button onclick="setWorkStatus('${t.id}','done')" class="text-[10px] bg-slate-900 border border-blue-500/40 hover:bg-blue-500/20 text-blue-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold"><i class="fa-solid fa-flag-checkered"></i> Mark Done</button>` : '';
+    const confirmAction = ts === 'done' ? `
+        <button onclick="confirmTaskDone('${t.id}')" class="text-[10px] bg-purple-600 hover:bg-purple-500 text-white px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold"><i class="fa-solid fa-circle-check"></i> Confirm Done</button>
+        ${t.donePhotoUrl ? `<a href="${t.donePhotoUrl}" target="_blank" class="text-[10px] bg-slate-900 border border-slate-600 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition flex items-center gap-1"><i class="fa-solid fa-image"></i> View Photo</a>` : ''}` : '';
+    adminActions = `<div class="flex gap-2 flex-wrap">
+        <button onclick="updateTicketStatus('${t.id}','${newStatus}')" class="text-[10px] bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-400 hover:text-indigo-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold">
+            <i class="fa-solid ${toggleIcon}"></i> ${escHTML(toggleLabel)}
+        </button>
+        <button onclick="assignTicket('${t.id}')" class="text-[10px] bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-400 hover:text-indigo-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold">
+            <i class="fa-solid fa-user-plus"></i> Assign
+        </button>
+        ${taskActions}${doneAction}${confirmAction}
+        <button onclick="deleteTicket('${t.id}')" class="text-[10px] bg-slate-900 border border-rose-500/30 hover:bg-rose-500/20 text-rose-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+    </div>`;
+
+    // ✅ FIXED INPUT (goes to comments node)
+    inputArea = `<div class="mt-4 pt-3 border-t border-slate-800 flex gap-2 items-center bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-2xl">
+        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px] shrink-0">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <input type="text" id="reply-input-${t.id}" maxlength="600" placeholder="Write official response..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+        <button onclick="sendAdminReply('${t.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg transition font-semibold shrink-0">
+            <i class="fa-solid fa-paper-plane mr-1"></i>Send
+        </button>
+    </div>`;
+}
+
+// 👤 Owner (no reply access)
+else if (isMine) {
+    adminActions = `<div class="flex gap-2">
+        <button onclick="editTicket('${t.id}')" class="text-[10px] bg-slate-800 border border-slate-700 hover:border-amber-500/50 text-slate-400 hover:text-amber-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-pen"></i> Edit
+        </button>
+
+        <button onclick="deleteTicket('${t.id}')" class="text-[10px] bg-slate-800 border border-slate-700 hover:border-rose-500/50 text-slate-400 hover:text-rose-400 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-trash"></i> Remove
+        </button>
+    </div>`;
+    }
+    // Non-owner, non-admin: no actions, no input area at all
+
+    return `<div class="ticket-card bg-slate-900 p-5 rounded-2xl border border-slate-800 ${status === 'closed' ? 'opacity-70' : ''}">
+        <div class="flex gap-3 mb-3">
+            ${avatar}
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-3">
+                    <h3 class="font-bold text-white text-sm leading-snug" title="${escHTML(t.title)}">${escHTML(t.title)}</h3>
+                    <div class="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                        <span class="text-[9px] font-bold ${statusColor(status)} border px-2 py-0.5 rounded-full uppercase tracking-wide">${escHTML(status)}</span>
+                        ${privacyBadge}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="text-[10px] font-semibold ${catColor(t.category)} border px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <i class="fa-solid ${catIcon(t.category)} text-[9px]"></i> ${escHTML(t.category||'General')}
+                    </span>
+                    ${t.year ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-indigo-400 text-[9px]"></i>${escHTML(t.year)}</span>` : ''}
+                    ${t.branch ? `<span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-md">${escHTML(t.branch)}</span>` : ''}
+                    ${deptBadge}
+                    ${aiPriorityBadge}
+                    ${assignedBadge}
+                    ${taskBadge}
+                    <span class="text-[10px] text-slate-600 border-l border-slate-800 pl-2 flex items-center gap-1"><i class="fa-regular fa-clock"></i>${timeAgo(t.createdAt)}</span>
+                </div>
+            </div>
+        </div>
+        <p class="text-sm text-slate-400 bg-slate-800/40 p-3.5 rounded-xl border border-slate-800 leading-relaxed whitespace-pre-wrap">${escHTML(t.description)}</p>
+    ${t.imageURL ? `
+    <div class="mt-3">
+        <a href="${escHTML(t.imageURL)}" target="_blank" rel="noopener" class="block group relative rounded-xl overflow-hidden border border-slate-700 hover:border-indigo-500 transition">
+            <img src="${escHTML(t.imageURL)}" alt="Attached image" loading="lazy"
+                 class="w-full max-h-64 object-cover transition group-hover:brightness-75"
+                 onerror="this.parentElement.parentElement.innerHTML='<p class=\\'text-xs text-slate-600 mt-2\\'>Image unavailable</p>'">
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <span class="bg-black/70 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <i class="fa-solid fa-up-right-from-square text-[10px]"></i> View full image
+                </span>
+            </div>
+        </a>
+    </div>` : ''}
+        ${replyHTML}
+        <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3">
+            <div class="text-[11px] text-slate-600 flex items-center gap-1">
+                <i class="fa-solid fa-satellite-dish text-slate-700 text-[10px]"></i>
+                Logged by <span class="font-semibold text-slate-400 ml-1">${byLine}</span>
+                ${isMine ? '<span class="text-indigo-400 font-bold bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[9px] uppercase ml-2">You</span>' : ''}
+            </div>
+            ${adminActions}
+        </div>
+        ${t.confirmationPhotoURL ? `<div class="mt-3"><p class="text-[10px] text-purple-400 font-semibold mb-1 flex items-center gap-1"><i class="fa-solid fa-camera"></i> Maintenance Confirmation</p><a href="${escHTML(t.confirmationPhotoURL)}" target="_blank" rel="noopener" class="block rounded-xl overflow-hidden border border-purple-700/40"><img src="${escHTML(t.confirmationPhotoURL)}" alt="Confirmation" loading="lazy" class="w-full max-h-48 object-cover"></a></div>` : ''}
+        ${t.aiReason ? `<div class="mt-2 flex items-center gap-1.5 text-[10px] text-cyan-500/80"><i class="fa-solid fa-robot text-[9px]"></i> AI: ${escHTML(t.aiReason)}</div>` : ''}
+        ${isMine && status === 'closed' && !t.feedback ? `<div class="mt-4 pt-3 border-t border-slate-800 bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-2xl">
+            <p class="text-[11px] text-slate-400 font-semibold mb-2 flex items-center gap-1"><i class="fa-solid fa-thumbs-up text-amber-400"></i> How was the support?</p>
+            <div class="flex items-center gap-1 mb-2">${[1,2,3,4,5].map(i=>`<button data-fb-ticket="${t.id}" data-fb-rating="${i}" onclick="setFeedbackStar('${t.id}',${i})" class="text-xl text-slate-600 hover:text-amber-400 transition"><i class="fa-solid fa-star"></i></button>`).join('')}</div>
+            <div class="flex gap-2"><input type="text" id="fb-comment-${t.id}" maxlength="200" placeholder="Optional comment..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-amber-500 transition"><button onclick="submitFeedback('${t.id}')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-lg transition font-semibold shrink-0"><i class="fa-solid fa-paper-plane"></i></button></div>
+        </div>` : ''}
+        ${t.feedback ? `<div class="mt-3 bg-amber-900/20 border border-amber-700/30 p-3 rounded-xl flex items-center gap-2 text-xs text-amber-300"><i class="fa-solid fa-star"></i> Feedback: ${'★'.repeat(t.feedback.rating||0)}${'☆'.repeat(5-(t.feedback.rating||0))} ${t.feedback.comment ? `— ${escHTML(t.feedback.comment)}` : ''}</div>` : ''}
+        ${inputArea}
+    </div>`;
+}
+
+// ── SUBMIT TICKET ─────────────────────────────────────────────────────
+window.submitTicket = async function() {
+    if (!currentUser) { showToast('Please sign in first.', 'error'); return; }
+    const category = document.getElementById('category-dropdown-btn').dataset.value;
+    const year     = document.getElementById('ticket-year').value;
+    const branch   = document.getElementById('ticket-branch').value;
+    const title    = document.getElementById('ticket-title').value.trim();
+    const desc     = document.getElementById('ticket-desc').value.trim();
+
+    if (!category) { showToast('Please select a category.', 'error'); return; }
+    if (!year)     { showToast('Please select a study year.', 'error'); return; }
+    if (!branch)   { showToast('Please select a branch.', 'error'); return; }
+    if (!title)    { showToast('Please enter a subject.', 'error'); return; }
+    if (!desc)     { showToast('Please describe the issue.', 'error'); return; }
+
+    const btn = document.getElementById('btn-submit-ticket');
+    const isEditing = !!editTicketId;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing...';
+    btn.disabled  = true;
+
+    const payload = { category, year, branch, title, description: desc };
+
+    try {
+        // ── IMAGE UPLOAD (if staged) ──────────────────────────────────
+        let imageURL  = null;
+        let imagePath = null;
+
+        if (pendingImageFile) {
+            // Rate limit check
+            if (isRateLimited()) {
+                showToast('Upload limit reached. Please wait a minute before uploading more images.', 'error');
+                btn.innerHTML = isEditing
+                    ? '<i class="fa-solid fa-pen mr-1"></i> Update Ticket'
+                    : '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+                btn.disabled = false;
+                return;
+            }
+
+            // Give ticket a provisional ID for storage path
+            const provId = isEditing ? editTicketId : `new_${Date.now()}_${currentUser.uid.slice(-6)}`;
+
+            try {
+                const compressed = await compressImage(pendingImageFile);
+                const result = await enqueueUpload(compressed, provId, (pct, state, retry, delay) => {
+                    setUploadProgress(pct, state, retry, delay);
+                });
+                imageURL  = result.url;
+                imagePath = result.publicId;   // store Cloudinary public_id for reference
+            } catch (uploadErr) {
+                showToast('Image upload failed: ' + (uploadErr.message || 'Unknown error'), 'error');
+                btn.innerHTML = isEditing
+                    ? '<i class="fa-solid fa-pen mr-1"></i> Update Ticket'
+                    : '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+                btn.disabled = false;
+                document.getElementById('img-progress-wrap').classList.add('hidden');
+                return;
+            }
+
+            if (imageURL) {
+                payload.imageURL  = imageURL;
+                payload.imagePath = imagePath;
+            }
+        }
+        if (isEditing) {
+            const ticketRef = rtdbRef(rtdb, `${TICKETS_COLLECTION}/${editTicketId}`);
+            const snap = await rtdbGet(ticketRef);
+            const ticketData = snap.val();
+            // Extra client-side guard: only allow edit if owned
+            if (!snap.exists() || (ticketData.authorId !== currentUser.uid && !isAdmin)) {
+                showToast('Permission denied.', 'error');
+                btn.innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Update Ticket';
+                btn.disabled = false;
+                return;
+            }
+            await rtdbUpdate(ticketRef, { ...payload, updatedAtMs: Date.now() });
+            showToast('Ticket updated.');
+            editTicketId = null;
+            document.getElementById('form-title').textContent = 'Raise a Ticket';
+        } else {
+            const routing = await aiRouteDepartment(title, desc, category);
+            await push(rtdbRef(rtdb, TICKETS_COLLECTION), {
+                ...payload,
+                authorId:    currentUser.uid,
+                authorName:  userCache.displayName || currentUser.displayName || 'Student',
+                authorPRN:   userCache.prn || null,
+                authorPhoto: currentUser.photoURL || null,
+                status:      'open',
+                taskStatus:  'pending',
+                department:  routing.department,
+                aiPriority:  routing.priority,
+                aiReason:    routing.reason,
+                createdAt:   Date.now(),
+                createdAtMs: Date.now()
+            });
+            showToast('Ticket submitted successfully.');
+        }
+        clearImagePick();
+        resetForm();
+        currentStatusFilter = 'all';
+        document.querySelectorAll('.status-filter-btn').forEach(b =>
+            b.classList.toggle('active', b.dataset.filter === 'all')
+        );
+        switchView('tickets');
+    } catch(e) {
+        console.error(e);
+        showToast('Failed: ' + e.message, 'error');
+    }
+    btn.innerHTML = isEditing
+        ? '<i class="fa-solid fa-pen mr-1"></i> Update Ticket'
+        : '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+    btn.disabled = false;
+};
+
+function resetForm() {
+    document.getElementById('ticket-year').value    = '';
+    document.getElementById('ticket-branch').value  = '';
+    document.getElementById('ticket-title').value   = '';
+    document.getElementById('ticket-desc').value    = '';
+    document.getElementById('category-dropdown-btn').dataset.value = '';
+    document.getElementById('selected-category-text').innerHTML = '<i class="fa-solid fa-tag text-slate-500 text-xs"></i> Select category...';
+    document.querySelectorAll('#year-selector button, #branch-selector button').forEach(b => {
+        b.classList.remove('bg-indigo-600','text-white','border-indigo-500');
+        b.classList.add('bg-slate-800','text-slate-300','border-slate-700');
+    });
+    clearImagePick();
+    editTicketId = null;
+    document.getElementById('form-title').textContent = 'Raise a Ticket';
+    document.getElementById('btn-submit-ticket').innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Submit Ticket';
+}
+
+// ── TICKET ACTIONS ────────────────────────────────────────────────────
+
+// ✅ ADMIN REPLY (FIXED - uses comments instead of adminReply field)
+window.sendAdminReply = async function(ticketId) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    const input = document.getElementById(`reply-input-${ticketId}`);
+    const text = input?.value.trim();
+
+    if (!text) { 
+        showToast('Response cannot be empty.', 'error'); 
+        return; 
+    }
+
+    input.disabled = true;
+
+    try {
+        // 🔥 Push reply into comments node (correct way)
+        await push(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}/comments`),
+            {
+                text: text,
+                authorId: auth.currentUser.uid,
+                authorName: auth.currentUser.displayName || "Admin",
+                isAdmin: true,
+                createdAt: Date.now()
+            }
+        );
+
+        // ✅ Update ticket status separately
+        await rtdbUpdate(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+            {
+                status: 'closed',
+                repliedAtMs: Date.now(),
+                updatedAtMs: Date.now()
+            }
+        );
+
+        showToast('Response posted and ticket resolved.');
+        input.value = '';
+
+    } catch(e) { 
+        showToast('Failed: ' + e.message, 'error'); 
+    }
+
+    input.disabled = false;
+};
+
+
+// ✅ UPDATE STATUS
+window.updateTicketStatus = async function(ticketId, newStatus) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    try {
+        await rtdbUpdate(
+            rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+            { 
+                status: newStatus, 
+                updatedAtMs: Date.now() 
+            }
+        );
+
+        showToast(`Ticket marked as ${newStatus}.`);
+
+    } catch(e) { 
+        showToast('Failed: ' + e.message, 'error'); 
+    }
+};
+
+
+// ✅ ASSIGN TICKET
+window.assignTicket = function(ticketId) {
+    if (!isAdmin) { 
+        showToast('Access denied.', 'error'); 
+        return; 
+    }
+
+    openAssignModal('Assign ticket to (name or email):', async (payload) => {
+        try {
+            // payload is either { name, email, memberId } or '' (clear)
+            const isClear = !payload || payload === '';
+            const name     = isClear ? null : (payload.name || null);
+            const email    = isClear ? null : (payload.email || null);
+            const memberId = isClear ? null : (payload.memberId || null);
+
+            await rtdbUpdate(
+                rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`),
+                { 
+                    assignedTo:         name,
+                    assignedToEmail:    email,
+                    assignedToMemberId: memberId,
+                    assignedAt:         isClear ? null : Date.now(),
+                    workStatus:         isClear ? null : 'pending',
+                    updatedAtMs:        Date.now() 
+                }
+            );
+
+            // Push personal notification to the assigned member's RTDB bucket
+            if (email && name) {
+                const ticket = allTickets.find(t => t.id === ticketId);
+                const emailKey = email.replace(/\./g,'_').replace(/@/g,'__at__');
+                await rtdbSet(
+                    rtdbRef(rtdb, `${PERSONAL_NOTIF_PATH}/${emailKey}/${Date.now()}`),
+                    {
+                        type:      'assignment',
+                        ticketId,
+                        title:     ticket?.title || 'Ticket',
+                        message:   `You have been assigned a ticket: "${ticket?.title || ticketId}"`,
+                        sentAt:    Date.now(),
+                        sentBy:    currentUser?.displayName || 'Admin',
+                        read:      false
+                    }
+                );
+            }
+
+            showToast(name ? `Assigned to ${name}.` : 'Assignment cleared.');
+
+        } catch(e) { 
+            showToast('Failed: ' + e.message, 'error'); 
+        }
+    });
+};
+
+// FIX: deleteTicket — only admin or ticket owner can delete
+window.deleteTicket = function(ticketId) {
+    const ticket = allTickets.find(x => x.id === ticketId);
+    if (!ticket) return;
+    if (!isAdmin && ticket.authorId !== currentUser?.uid) {
+        showToast('You can only delete your own tickets.', 'error'); return;
+    }
+    showConfirm('Delete Ticket', 'This will permanently remove this ticket.', async () => {
+        try {
+            // Note: Cloudinary image cleanup requires a server-side signed request.
+            // The ticket data and DB record are removed here; images auto-expire
+            // or can be cleaned from Cloudinary dashboard using the ticket tag.
+            await rtdbRemove(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`));
+            showToast('Ticket deleted.');
+        } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
+};
+
+window.editTicket = function(ticketId) {
+    const t = allTickets.find(x => x.id === ticketId);
+    if (!t) return;
+    // FIX: Only owner or admin can edit
+    if (!isAdmin && t.authorId !== currentUser?.uid) { showToast('Permission denied.', 'error'); return; }
+    editTicketId = ticketId;
+    setCategory(t.category, t.category);
+    document.getElementById('ticket-title').value = t.title || '';
+    document.getElementById('ticket-desc').value  = t.description || '';
+    document.querySelectorAll('#year-selector button').forEach(b => {
+        const a = b.dataset.value === t.year;
+        b.classList.toggle('bg-indigo-600', a); b.classList.toggle('text-white', a);
+        b.classList.toggle('bg-slate-800', !a); b.classList.toggle('text-slate-300', !a);
+        if (a) document.getElementById('ticket-year').value = t.year;
+    });
+    document.querySelectorAll('#branch-selector button').forEach(b => {
+        const a = b.dataset.value === t.branch;
+        b.classList.toggle('bg-indigo-600', a); b.classList.toggle('text-white', a);
+        b.classList.toggle('bg-slate-800', !a); b.classList.toggle('text-slate-300', !a);
+        if (a) document.getElementById('ticket-branch').value = t.branch;
+    });
+    document.getElementById('form-title').textContent = 'Edit Ticket';
+    document.getElementById('btn-submit-ticket').innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Update Ticket';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    switchView('tickets');
+};
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────
+function renderDashboard() {
+    const container = document.getElementById('dashboard-metrics');
+    const open   = allTickets.filter(t => (t.status||'open') === 'open').length;
+    const closed = allTickets.filter(t => t.status === 'closed').length;
+    const catCounts = allTickets.reduce((a, t) => { a[t.category] = (a[t.category]||0)+1; return a; }, {});
+    const topCat = Object.keys(catCounts).sort((a,b) => catCounts[b]-catCounts[a])[0] || 'N/A';
+    let totalRes = 0, resCount = 0;
+    allTickets.forEach(t => {
+        if (t.status === 'closed' && t.createdAt && t.repliedAt) {
+            totalRes += (t.repliedAt.toMillis() - t.createdAt.toMillis());
+            resCount++;
+        }
+    });
+    const avgHrs = resCount > 0 ? (totalRes / resCount / 3600000).toFixed(1) : '—';
+
+    container.innerHTML = `
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-folder-open text-amber-400"></i> Open</div>
+            <div class="text-4xl font-bold text-white mt-2">${open}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Resolved</div>
+            <div class="text-4xl font-bold text-white mt-2">${closed}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-400"></i> Avg Resolution (hrs)</div>
+            <div class="text-4xl font-bold text-white mt-2">${avgHrs}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-purple-400"></i> Top Category</div>
+            <div class="text-xl font-bold text-white mt-2 truncate">${escHTML(topCat)}</div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl col-span-full mt-2">
+            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-4">Ticket Distribution by Category</div>
+            <div id="neon-graph" class="w-full" style="height:220px;"></div>
+        </div>`;
+    requestAnimationFrame(() => setTimeout(() => renderD3Graph(catCounts), 50));
+}
+
+function renderD3Graph(data) {
+    const container = document.getElementById('neon-graph');
+    if (!container) return;
+    container.innerHTML = '';
+    const W = container.clientWidth || 500, H = 200;
+    const keys = Object.keys(data), vals = Object.values(data);
+    if (!keys.length) { container.innerHTML = '<p class="text-slate-500 text-sm text-center pt-10">No ticket data yet.</p>'; return; }
+    const svg  = d3.select('#neon-graph').append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet');
+    const defs = svg.append('defs');
+    const filt = defs.append('filter').attr('id','glow2');
+    filt.append('feGaussianBlur').attr('stdDeviation','3').attr('result','blur');
+    const mrg = filt.append('feMerge'); mrg.append('feMergeNode').attr('in','blur'); mrg.append('feMergeNode').attr('in','SourceGraphic');
+    const m = { top:20, right:20, bottom:40, left:30 };
+    const x = d3.scaleBand().domain(keys).range([m.left,W-m.right]).padding(0.4);
+    const y = d3.scaleLinear().domain([0,d3.max(vals)||1]).range([H-m.bottom,m.top]);
+    svg.append('g').attr('transform',`translate(0,${H-m.bottom})`).call(d3.axisBottom(x))
+        .selectAll('text').attr('fill','#64748b').attr('font-size','10px').attr('font-family','DM Sans');
+    svg.selectAll('.domain,.tick line').attr('stroke','#1e293b');
+    const g = defs.append('linearGradient').attr('id','bg2').attr('x1','0').attr('x2','0').attr('y1','0').attr('y2','1');
+    g.append('stop').attr('offset','0%').attr('stop-color','#818cf8');
+    g.append('stop').attr('offset','100%').attr('stop-color','#4f46e5');
+    svg.selectAll('rect').data(keys).enter().append('rect')
+        .attr('x',d=>x(d)).attr('y',d=>y(data[d]))
+        .attr('width',x.bandwidth()).attr('height',d=>H-m.bottom-y(data[d]))
+        .attr('fill','url(#bg2)').attr('filter','url(#glow2)').attr('rx',4);
+    svg.selectAll('.lbl').data(keys).enter().append('text')
+        .attr('x',d=>x(d)+x.bandwidth()/2).attr('y',d=>y(data[d])-5)
+        .attr('text-anchor','middle').attr('fill','#a5b4fc').attr('font-size','11px').attr('font-family','DM Sans')
+        .text(d=>data[d]);
+}
+
+// ── ADMIN VIEW ────────────────────────────────────────────────────────
+function renderAdminView() {
+    if (!isAdmin) return;
+    const container = document.getElementById('admin-controls');
+    const users = [...new Set(allTickets.map(t => t.authorId||'anon'))];
+
+    const roleIcon = { Principal:'fa-user-tie', HOD:'fa-chalkboard-teacher', Faculty:'fa-person-chalkboard', Technician:'fa-screwdriver-wrench', 'Lab Assistant':'fa-flask' };
+    const roleColor = { Principal:'text-purple-400', HOD:'text-blue-400', Faculty:'text-emerald-400', Technician:'text-amber-400', 'Lab Assistant':'text-cyan-400' };
+
+    const pendingMembers  = allMembers.filter(m => m.status === 'pending');
+    const approvedMembers = allMembers.filter(m => m.status === 'approved');
+
+    const pendingHTML = pendingMembers.length ? pendingMembers.map(m => `
+        <div class="flex items-center gap-3 p-3 bg-amber-950/30 border border-amber-700/40 rounded-xl">
+            <div class="w-9 h-9 rounded-lg bg-amber-600/20 border border-amber-600/30 flex items-center justify-center text-amber-400 shrink-0">
+                <i class="fa-solid ${roleIcon[m.role]||'fa-user'} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-white truncate">${escHTML(m.name)}</p>
+                <p class="text-[10px] text-amber-400">${escHTML(m.role||'Unknown')}${m.email ? ' · '+escHTML(m.email) : ''}</p>
+            </div>
+            <div class="flex gap-1.5 shrink-0">
+                <button onclick="approveMember('${m.id}')" class="text-[10px] bg-emerald-900/40 border border-emerald-600/50 hover:bg-emerald-600/30 text-emerald-400 px-2.5 py-1.5 rounded-lg transition font-semibold"><i class="fa-solid fa-check mr-1"></i>Approve</button>
+                <button onclick="rejectMember('${m.id}')" class="text-[10px] bg-rose-900/30 border border-rose-600/40 hover:bg-rose-600/20 text-rose-400 px-2.5 py-1.5 rounded-lg transition font-semibold"><i class="fa-solid fa-xmark mr-1"></i>Reject</button>
+            </div>
+        </div>`).join('') : '<p class="text-slate-600 text-xs text-center py-4">No pending approvals.</p>';
+
+    const approvedHTML = approvedMembers.length ? approvedMembers.map(m => `
+        <div class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-xl">
+            <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center ${roleColor[m.role]||'text-slate-400'} shrink-0">
+                <i class="fa-solid ${roleIcon[m.role]||'fa-user'} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-white truncate">${escHTML(m.name)}</p>
+                <p class="text-[10px] ${roleColor[m.role]||'text-slate-400'}">${escHTML(m.role||'Unknown')}${m.email ? ' · '+escHTML(m.email) : ''}</p>
+            </div>
+            <button onclick="removeMember('${m.id}','${escHTML(m.name)}')" class="text-slate-600 hover:text-rose-400 transition p-1.5 shrink-0" title="Remove member">
+                <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+        </div>`).join('') : '<p class="text-slate-600 text-xs text-center py-4">No approved members yet.</p>';
+
+    container.innerHTML = `
+        <div class="space-y-5">
+
+        <!-- ── Members Management ───────────────────────────────────────── -->
+        <div class="glass-card p-5 rounded-2xl border border-indigo-900/40">
+            <h3 class="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+                <i class="fa-solid fa-id-badge text-indigo-400"></i> Staff / Member Management
+            </h3>
+
+            <!-- Add member form -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-4">
+                <p class="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-3">Add New Member</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+                    <input id="new-member-name" type="text" maxlength="60" placeholder="Full name..." class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+                    <select id="new-member-role" class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition appearance-none">
+                        <option value="">Select role...</option>
+                        <option value="Principal">Principal</option>
+                        <option value="HOD">HOD</option>
+                        <option value="Faculty">Faculty</option>
+                        <option value="Technician">Technician</option>
+                        <option value="Lab Assistant">Lab Assistant</option>
+                    </select>
+                    <input id="new-member-email" type="email" maxlength="80" placeholder="Email (optional)..." class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+                </div>
+                <button onclick="addMember()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg transition font-semibold">
+                    <i class="fa-solid fa-user-plus mr-1"></i> Add Member
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Pending approvals -->
+                <div>
+                    <p class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hourglass-half text-[10px]"></i> Pending (${pendingMembers.length})
+                    </p>
+                    <div class="space-y-2 max-h-64 overflow-y-auto pr-1">${pendingHTML}</div>
+                </div>
+                <!-- Approved members -->
+                <div>
+                    <p class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-[10px]"></i> Approved (${approvedMembers.length})
+                    </p>
+                    <div class="space-y-2 max-h-64 overflow-y-auto pr-1">${approvedHTML}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tickets & Stats ───────────────────────────────────────────── -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-ticket text-indigo-400"></i> All Tickets (${allTickets.length})
+                </h3>
+                <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                    ${allTickets.map(t => `<div class="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800 gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm text-slate-300 truncate font-medium">${escHTML(t.title)}</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">${escHTML(t.authorName||'')} &middot; <span class="${t.status==='closed'?'text-emerald-400':'text-amber-400'}">${t.status||'open'}</span></p>
+                        </div>
+                        <button onclick="deleteTicket('${t.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 shrink-0 transition">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>`).join('')}
+                </div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-users text-indigo-400"></i> Participation
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Unique users</span>
+                        <span class="font-bold text-white">${users.length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Total tickets</span>
+                        <span class="font-bold text-white">${allTickets.length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Open tickets</span>
+                        <span class="font-bold text-amber-400">${allTickets.filter(t=>(t.status||'open')==='open').length}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400">Resolved</span>
+                        <span class="font-bold text-emerald-400">${allTickets.filter(t=>t.status==='closed').length}</span>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-500 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+                    Admin: co.2024.prdeshkar@bitwardha.ac.in
+                </div>
+            </div>
+        </div>
+
+        </div>`;
+}
+
+// ── MEMBER MANAGEMENT FUNCTIONS ───────────────────────────────────────
+window.addMember = async function() {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    const name  = (document.getElementById('new-member-name')?.value || '').trim();
+    const role  = document.getElementById('new-member-role')?.value || '';
+    const email = (document.getElementById('new-member-email')?.value || '').trim();
+    if (!name) { showToast('Enter a name.', 'error'); return; }
+    if (!role) { showToast('Select a role.', 'error'); return; }
+    try {
+        await push(rtdbRef(rtdb, MEMBERS_PATH), {
+            name, role, email: email || null,
+            status: 'approved',
+            addedBy: currentUser?.uid || null,
+            addedAt: Date.now()
+        });
+        document.getElementById('new-member-name').value  = '';
+        document.getElementById('new-member-role').value  = '';
+        document.getElementById('new-member-email').value = '';
+        showToast(`${name} added as ${role}.`);
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.approveMember = async function(memberId) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${MEMBERS_PATH}/${memberId}`), {
+            status: 'approved', approvedBy: currentUser?.uid || null, approvedAt: Date.now()
+        });
+        showToast('Member approved.');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.rejectMember = async function(memberId) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    showConfirm('Reject Member', 'Remove this pending member request?', async () => {
+        try {
+            await rtdbRemove(rtdbRef(rtdb, `${MEMBERS_PATH}/${memberId}`));
+            showToast('Member request rejected and removed.');
+        } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+    });
+};
+
+window.removeMember = function(memberId, memberName) {
+    if (!isAdmin) { showToast('Access denied.', 'error'); return; }
+    showConfirm('Remove Member', `Remove ${memberName} from the staff roster?`, async () => {
+        try {
+            await rtdbRemove(rtdbRef(rtdb, `${MEMBERS_PATH}/${memberId}`));
+            showToast(`${memberName} removed.`);
+        } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+    });
+};
+
+// ── UPDATES ───────────────────────────────────────────────────────────
+function renderUpdatesView() {
+    const feed = document.getElementById('updates-feed');
+    if (!allUpdates.length) {
+        feed.innerHTML = '<p class="text-slate-500 text-center py-10 text-sm">No public updates yet.</p>';
+        return;
+    }
+    feed.innerHTML = allUpdates.map(u => {
+        // Attachment section
+        let attachHTML = '';
+        if (u.attachURL) {
+            if (u.attachType === 'pdf') {
+                attachHTML = `<a href="${escHTML(u.attachURL)}" target="_blank" rel="noopener"
+                    class="mt-3 flex items-center gap-3 bg-slate-900 border border-slate-700 hover:border-indigo-500 p-3 rounded-xl transition group">
+                    <div class="w-10 h-10 bg-rose-500/20 border border-rose-500/30 rounded-lg flex items-center justify-center text-rose-400 shrink-0">
+                        <i class="fa-solid fa-file-pdf text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-slate-200 truncate">${escHTML(u.attachName || 'Attachment.pdf')}</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">PDF · Click to open</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-indigo-400 text-xs group-hover:text-indigo-300 shrink-0"></i>
+                </a>`;
+            } else {
+                attachHTML = `<a href="${escHTML(u.attachURL)}" target="_blank" rel="noopener"
+                    class="mt-3 block group relative rounded-xl overflow-hidden border border-slate-700 hover:border-indigo-500 transition">
+                    <img src="${escHTML(u.attachURL)}" alt="Attachment" loading="lazy"
+                        class="w-full max-h-64 object-cover transition group-hover:brightness-75"
+                        onerror="this.parentElement.parentElement.innerHTML='<p class=\\'text-xs text-slate-600 mt-2\\'>Image unavailable</p>'">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <span class="bg-black/70 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-up-right-from-square text-[10px]"></i> View full image
+                        </span>
+                    </div>
+                </a>`;
+            }
+        }
+
+        // Poll section — votes stored as RTDB object: { uid: optIdx }
+        let pollHTML = '';
+        if (u.poll && u.poll.question) {
+            const votesMap    = u.poll.votes || {};                          // { uid: optIdx }
+            const totalVotes  = Object.keys(votesMap).length;
+            const myVotedIdx  = currentUser ? votesMap[currentUser.uid] : undefined;
+            const hasVoted    = myVotedIdx !== undefined;
+
+            const optionVotes = (u.poll.options || []).map((opt, i) => {
+                const count = Object.values(votesMap).filter(v => v === i).length;
+                const pct   = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+                const isMine = hasVoted && myVotedIdx === i;
+                return `<div class="mb-1.5">
+                    ${hasVoted ? `
+                    <div class="flex items-center justify-between text-xs text-slate-300 mb-0.5">
+                        <span>${escHTML(opt)}${isMine ? ' <span class="text-indigo-400 font-bold">✓</span>' : ''}</span>
+                        <span class="text-slate-500">${pct}% (${count})</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5">
+                        <div class="h-1.5 ${isMine ? 'bg-indigo-500' : 'bg-slate-600'} rounded-full transition-all" style="width:${pct}%"></div>
+                    </div>` : `
+                    <button onclick="castVote('${u.id}', ${i})" class="w-full text-left text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500 px-3 py-2 rounded-lg transition">
+                        ${escHTML(opt)}
+                    </button>`}
+                </div>`;
+            }).join('');
+
+            pollHTML = `<div class="mt-3 bg-slate-900 border border-slate-700 rounded-xl p-3">
+                <p class="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-bar text-indigo-400 text-[11px]"></i> ${escHTML(u.poll.question)}
+                </p>
+                ${optionVotes}
+                <p class="text-[10px] text-slate-500 mt-2">${totalVotes} vote${totalVotes !== 1 ? 's' : ''}</p>
+            </div>`;
+        }
+
+        return `<div class="glass-card p-4 rounded-xl border border-slate-700">
+            <p class="text-slate-200 text-sm leading-relaxed">${escHTML(u.text)}</p>
+            ${attachHTML}
+            ${pollHTML}
+            <div class="flex justify-between items-center mt-3">
+                <span class="text-[10px] text-slate-500 flex items-center gap-1">
+                    <i class="fa-solid fa-user-shield text-indigo-400"></i> ${escHTML(u.authorName||'Admin')} &middot; ${timeAgo(u.createdAt)}
+                </span>
+                ${isAdmin ? `<button onclick="deleteAnnouncement('${u.id}')" class="text-rose-400 hover:text-rose-300 text-[10px] transition p-1"><i class="fa-solid fa-trash text-[11px]"></i></button>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+window.postAnnouncement = async function() {
+    if (!isAdmin) { showToast('Admin only.', 'error'); return; }
+    const text = document.getElementById('announcement-text').value.trim();
+    if (!text) { showToast('Cannot post empty announcement.', 'error'); return; }
+
+    const btn = document.querySelector('#admin-post-box button[onclick="postAnnouncement()"]');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Posting...'; }
+
+    try {
+        const payload = {
+            text,
+            authorName:  userCache.displayName || 'Admin',
+            createdAtMs: Date.now()
+        };
+
+        // ── File attachment via Cloudinary ────────────────────────────
+        if (annPendingFile) {
+            document.getElementById('ann-upload-progress').classList.remove('hidden');
+            const isRaw    = annPendingFile.type === 'application/pdf';
+            const uploadURL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${isRaw ? 'raw' : 'image'}/upload`;
+            const fd = new FormData();
+            fd.append('file',           annPendingFile);
+            fd.append('upload_preset',  CLOUDINARY_PRESET);
+            fd.append('folder',         'bit_updates/announcements');
+            await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', uploadURL, true);
+                xhr.upload.onprogress = e => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round(e.loaded / e.total * 100);
+                        document.getElementById('ann-progress-bar').style.width = pct + '%';
+                        document.getElementById('ann-progress-label').textContent = `Uploading… ${pct}%`;
+                    }
+                };
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        const res = JSON.parse(xhr.responseText);
+                        payload.attachURL  = res.secure_url;
+                        payload.attachName = annPendingFile.name;
+                        payload.attachType = isRaw ? 'pdf' : 'image';
+                        resolve();
+                    } else reject(new Error('Cloudinary upload failed: ' + xhr.status));
+                };
+                xhr.onerror = () => reject(new Error('Network error during upload'));
+                xhr.send(fd);
+            });
+        }
+
+        // ── Poll ──────────────────────────────────────────────────────
+        const pollPanel = document.getElementById('ann-poll-panel');
+        if (pollPanel && !pollPanel.classList.contains('hidden-safely')) {
+            const question = document.getElementById('poll-question').value.trim();
+            const options  = [...document.querySelectorAll('.poll-opt')].map(i => i.value.trim()).filter(Boolean);
+            if (question && options.length >= 2) {
+                payload.poll = { question, options };  // votes stored separately as votes/optIdx counts
+            }
+        }
+
+        // ── Write to RTDB (instant cross-device) ──────────────────────
+        const newRef = push(rtdbRef(rtdb, ANNOUNCEMENTS_PATH));
+        await rtdbSet(newRef, payload);
+
+        // ── Also push a notification ──────────────────────────────────
+        await push(rtdbRef(rtdb, NOTIFICATIONS_PATH), {
+            title:       'New Announcement',
+            body:        text.length > 80 ? text.slice(0, 80) + '…' : text,
+            createdAtMs: Date.now()
+        });
+
+        // Reset form
+        document.getElementById('announcement-text').value = '';
+        clearAnnFile();
+        const pq = document.getElementById('poll-question');
+        if (pq) pq.value = '';
+        document.querySelectorAll('.poll-opt').forEach(i => i.value = '');
+        showToast('Announcement posted — live on all devices!');
+    } catch(e) {
+        showToast('Failed: ' + e.message, 'error');
+        console.error(e);
+    }
+
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Post Update'; }
+    document.getElementById('ann-upload-progress')?.classList.add('hidden');
+};
+
+// ── RESOURCES ─────────────────────────────────────────────────────────
+let selectedCategory = "First Year (FY)";
+    const RESOURCES = {
+    "First Year (FY)": [
+        {
+            title: "FY PYQ (All Subjects) - Set 1",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/14-MjWjZStCQhwGOWpprH8Sc44GrlX_cE"
+        },
+        {
+            title: "FY PYQ (All Subjects) - Set 2",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1bpFzsgC0Ri0zVgg6yEVJ6JqC9BazlMiP"
+        }
+    ],
+
+    "Second Year (SY)": [
+        {
+            title: "BTech SY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1MRgDb89eTYvRHOIh1RQrClZORIJ1134l"
+        }
+    ],
+
+    "Third Year (TY)": [
+        {
+            title: "BTech TY PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1Nhn4DwiE8ztVt_-QoOrkTDrSUq4b_DA-"
+        }
+    ],
+
+    "Final Year": [
+        {
+            title: "BTech Final Year PYQ (All Subjects)",
+            author: "Previous Year Questions",
+            link: "https://drive.google.com/drive/folders/1EPQ-g1d0dlmryhTNMplAmDHRYemoGH6E"
+        }
+    ]
+};
+window.renderResourcesView = function(branch = "First Year (FY)") {
+    const feed = document.getElementById('resources-feed');
+    const tabs = Object.keys(RESOURCES).map(b => `
+        <button onclick="renderResourcesView('${b}')" class="px-4 py-2 rounded-xl text-sm font-medium transition ${b===branch?'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20':'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'}">${b}</button>`
+    ).join('');
+    const items = (RESOURCES[branch]||[]).map(r => `
+        <div class="glass-card p-4 rounded-xl border border-slate-700 flex justify-between items-center gap-4">
+            <div>
+                <h4 class="text-white font-semibold text-sm">${escHTML(r.title)}</h4>
+                <p class="text-xs text-slate-400 mt-0.5">by ${escHTML(r.author)}</p>
+            </div>
+            <a href="${r.link}" target="_blank" rel="noopener" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 flex items-center gap-1">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Open
+            </a>
+        </div>`).join('') || '<p class="text-slate-500 text-sm text-center py-4">Select your Year</p>';
+    feed.innerHTML = `<div class="flex flex-wrap gap-2 mb-5">${tabs}</div><div class="space-y-3">${items}</div>`;
+};
+
+// ── DROPDOWN / PILL HELPERS ──────────────────────────────────────────
+window.toggleDropdown = function() {
+    document.getElementById('category-options').classList.toggle('hidden');
+};
+window.setCategory = function(value, label) {
+    document.getElementById('category-dropdown-btn').dataset.value = value;
+    document.getElementById('selected-category-text').innerHTML =
+        `<i class="fa-solid fa-tag text-indigo-400 text-xs"></i> ${escHTML(label)}`;
+    document.getElementById('category-options').classList.add('hidden');
+};
+window.selectPill = function(hiddenId, btn) {
+    document.getElementById(hiddenId).value = btn.dataset.value;
+    btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('bg-indigo-600','text-white','border-indigo-500');
+        b.classList.add('bg-slate-800','text-slate-300','border-slate-700');
+    });
+    btn.classList.add('bg-indigo-600','text-white','border-indigo-500');
+    btn.classList.remove('bg-slate-800','text-slate-300');
+};
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('#ticket-category-wrapper'))
+        document.getElementById('category-options')?.classList.add('hidden');
+});
+
+// ── ANNOUNCEMENT FILE ATTACH ──────────────────────────────────────────
+let annPendingFile = null;
+
+window.handleAnnFilePick = function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const ALLOWED = ['image/jpeg','image/png','image/webp','image/gif','application/pdf'];
+    if (!ALLOWED.includes(file.type)) { showToast('Only images or PDFs allowed.', 'error'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('File must be under 10 MB.', 'error'); return; }
+    annPendingFile = file;
+    const preview  = document.getElementById('ann-file-preview');
+    const iconEl   = document.getElementById('ann-file-icon');
+    const nameEl   = document.getElementById('ann-file-name');
+    const sizeEl   = document.getElementById('ann-file-size');
+    nameEl.textContent = file.name.length > 32 ? file.name.slice(0,30)+'…' : file.name;
+    sizeEl.textContent = (file.size/1048576).toFixed(1) + ' MB';
+    if (file.type === 'application/pdf') {
+        iconEl.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+        iconEl.className = 'w-12 h-12 flex items-center justify-center rounded-lg border border-slate-600 shrink-0 bg-slate-900 text-rose-400 text-2xl';
+    } else {
+        iconEl.innerHTML = '<i class="fa-solid fa-image"></i>';
+        iconEl.className = 'w-12 h-12 flex items-center justify-center rounded-lg border border-slate-600 shrink-0 bg-slate-900 text-indigo-400 text-2xl';
+    }
+    preview.classList.remove('hidden');
+};
+
+window.clearAnnFile = function() {
+    annPendingFile = null;
+    document.getElementById('ann-file-preview').classList.add('hidden');
+    document.getElementById('ann-upload-progress').classList.add('hidden');
+    document.getElementById('ann-file-input').value = '';
+};
+
+// ── ANNOUNCEMENT TABS ─────────────────────────────────────────────────
+window.switchAnnTab = function(tab) {
+    const mediaPanel = document.getElementById('ann-media-panel');
+    const pollPanel  = document.getElementById('ann-poll-panel');
+    const mediaBt    = document.getElementById('ann-tab-media');
+    const pollBt     = document.getElementById('ann-tab-poll');
+    if (tab === 'media') {
+        mediaPanel.classList.remove('hidden-safely');
+        pollPanel.classList.add('hidden-safely');
+        mediaBt.className = 'ann-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition bg-slate-700 text-white';
+        pollBt.className  = 'ann-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white';
+    } else {
+        pollPanel.classList.remove('hidden-safely');
+        mediaPanel.classList.add('hidden-safely');
+        pollBt.className  = 'ann-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition bg-slate-700 text-white';
+        mediaBt.className = 'ann-tab-btn text-xs font-medium px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white';
+    }
+};
+
+// ── POLL HELPERS ──────────────────────────────────────────────────────
+window.addPollOption = function() {
+    const list = document.getElementById('poll-options-list');
+    const count = list.querySelectorAll('.poll-option-row').length + 1;
+    if (count > 6) { showToast('Maximum 6 options allowed.', 'error'); return; }
+    const row = document.createElement('div');
+    row.className = 'poll-option-row';
+    row.innerHTML = `<input type="text" maxlength="80" placeholder="Option ${count}" class="poll-opt flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs p-2 rounded-lg transition">
+        <button type="button" onclick="removePollOption(this)" class="text-slate-600 hover:text-rose-400 transition p-1"><i class="fa-solid fa-minus text-xs"></i></button>`;
+    list.appendChild(row);
+};
+window.removePollOption = function(btn) {
+    const rows = document.getElementById('poll-options-list').querySelectorAll('.poll-option-row');
+    if (rows.length <= 2) { showToast('Poll needs at least 2 options.', 'error'); return; }
+    btn.closest('.poll-option-row').remove();
+};
+
+// ── VOTE ON POLL ──────────────────────────────────────────────────────
+window.castVote = async function(announceId, optIdx) {
+    if (!currentUser) { showToast('Please sign in to vote.', 'error'); return; }
+    // Store vote as: announcements/<id>/votes/<uid> = optIdx chosen
+    const votePath = rtdbRef(rtdb, `${ANNOUNCEMENTS_PATH}/${announceId}/votes/${currentUser.uid}`);
+    try {
+        const snap = await rtdbGet(votePath);
+        if (snap.exists()) { showToast('You have already voted.', 'info'); return; }
+        await rtdbSet(votePath, optIdx);
+        showToast('Vote cast!');
+    } catch(e) { showToast('Vote failed: ' + e.message, 'error'); }
+};
+
+// ── DELETE ANNOUNCEMENT ───────────────────────────────────────────────
+window.deleteAnnouncement = function(id) {
+    showConfirm('Delete Announcement', 'Remove this announcement for all users?', async () => {
+        try {
+            await rtdbRemove(rtdbRef(rtdb, `${ANNOUNCEMENTS_PATH}/${id}`));
+            showToast('Announcement deleted.');
+        } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
+};
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────
+let allNotifications   = [];
+let readNotifIds       = new Set();   // populated per-user in startNotifListener
+let unsubNotifications = null;
+
+function getReadKey() {
+    return 'bitup_read_notifs_' + (currentUser?.uid || 'anon');
+}
+function loadReadIds() {
+    try { readNotifIds = new Set(JSON.parse(localStorage.getItem(getReadKey()) || '[]')); }
+    catch(e) { readNotifIds = new Set(); }
+}
+function saveReadIds() {
+    try { localStorage.setItem(getReadKey(), JSON.stringify([...readNotifIds])); } catch(e) {}
+}
+
+// ── Notifications: pure RTDB, no Firestore, no index, ~100ms cross-device ──
+function startNotifListener() {
+    loadReadIds();
+    if (unsubNotifications) { unsubNotifications(); unsubNotifications = null; }
+
+    unsubNotifications = onValue(rtdbRef(rtdb, NOTIFICATIONS_PATH), snap => {
+        const rows = snap.val() || {};
+        allNotifications = Object.entries(rows)
+            .map(([id, data]) => ({ id, ...data }))
+            .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+        renderNotifications();
+        updateBellBadge();
+    }, err => console.error('Notifications RTDB error:', err));
+}
+
+function unreadCount() {
+    return allNotifications.filter(n => !readNotifIds.has(n.id)).length;
+}
+
+function updateBellBadge() {
+    const badge = document.getElementById('notif-badge');
+    const cnt   = unreadCount();
+    if (cnt > 0) {
+        badge.textContent = cnt > 9 ? '9+' : String(cnt);
+        badge.classList.remove('hidden-safely');
+        const bell = document.getElementById('bell-icon');
+        bell.classList.add('bell-ring');
+        setTimeout(() => bell.classList.remove('bell-ring'), 700);
+    } else {
+        badge.classList.add('hidden-safely');
+    }
+}
+
+function renderNotifications() {
+    const list = document.getElementById('notif-list');
+    if (!list) return;
+    if (!allNotifications.length) {
+        list.innerHTML = '<p class="text-slate-500 text-xs text-center py-8">No notifications yet.</p>';
+        return;
+    }
+    list.innerHTML = allNotifications.map(n => {
+        const unread = !readNotifIds.has(n.id);
+        return `<div class="flex gap-3 p-3 rounded-xl transition cursor-pointer hover:bg-slate-800/60 ${unread ? 'bg-indigo-950/30 border border-indigo-900/50' : 'border border-transparent'}"
+            onclick="markNotifRead('${n.id}')">
+            <div class="w-8 h-8 shrink-0 rounded-full ${unread ? 'bg-indigo-600' : 'bg-slate-800'} flex items-center justify-center text-white">
+                <i class="fa-solid fa-bell text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-white truncate">${escHTML(n.title || 'Notification')}</p>
+                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">${escHTML(n.body || '')}</p>
+                <p class="text-[10px] text-slate-600 mt-1">${timeAgo(n.createdAtMs)}</p>
+            </div>
+            ${unread ? '<div class="w-2 h-2 rounded-full bg-indigo-400 shrink-0 mt-1.5"></div>' : ''}
+        </div>`;
+    }).join('');
+}
+
+window.markNotifRead = function(id) {
+    readNotifIds.add(id);
+    saveReadIds();
+    renderNotifications();
+    updateBellBadge();
+};
+
+document.getElementById('notif-mark-all-read').onclick = function() {
+    allNotifications.forEach(n => readNotifIds.add(n.id));
+    saveReadIds();
+    renderNotifications();
+    updateBellBadge();
+};
+
+document.getElementById('btn-bell').onclick = function(e) {
+    e.stopPropagation();
+    const panel   = document.getElementById('notif-panel');
+    const isHidden = panel.classList.contains('hidden-safely');
+    if (isHidden) {
+        panel.classList.remove('hidden-safely');
+        renderNotifications();
+    } else {
+        panel.classList.add('hidden-safely');
+    }
+};
+
+document.getElementById('notif-panel-close').onclick = () =>
+    document.getElementById('notif-panel').classList.add('hidden-safely');
+
+// ── ROLE DETECTION ────────────────────────────────────────────────────
+function detectMemberRole() {
+    if (!currentUser || !currentUser.email) { currentMember = null; updateMemberRoleUI(); return; }
+    const email = currentUser.email.toLowerCase().trim();
+    const found  = allMembers.find(m => m.status === 'approved' && m.email && m.email.toLowerCase().trim() === email);
+    currentMember = found || null;
+    updateMemberRoleUI();
+}
+
+const ROLE_ICONS = { 'Principal':'fa-crown','HOD':'fa-user-tie','Faculty':'fa-chalkboard-user','Technician':'fa-screwdriver-wrench','Lab Assistant':'fa-flask' };
+const ROLE_COLORS = { 'Principal':'text-purple-400','HOD':'text-blue-400','Faculty':'text-emerald-400','Technician':'text-amber-400','Lab Assistant':'text-cyan-400' };
+const ROLE_BADGE_CLASSES = { 'Principal':'role-Principal','HOD':'role-HOD','Faculty':'role-Faculty','Technician':'role-Technician','Lab Assistant':'role-Lab' };
+
+function updateMemberRoleUI() {
+    const myWorkBtn = document.getElementById('nav-mywork-btn');
+    const labBtn    = document.getElementById('nav-labstatus-btn');
+    const badge     = document.getElementById('member-role-badge');
+    const roleLabel = document.getElementById('member-role-label');
+    const roleIcon  = document.getElementById('member-role-icon');
+    const roleEmail = document.getElementById('member-role-email');
+
+    if (currentMember && !isAdmin) {
+        const role = currentMember.role;
+        myWorkBtn?.classList.remove('hidden-safely');
+        if (role === 'Lab Assistant' || role === 'Technician') {
+            labBtn?.classList.remove('hidden-safely');
+        } else {
+            labBtn?.classList.add('hidden-safely');
+        }
+        if (badge) {
+            badge.classList.remove('hidden-safely');
+            Object.values(ROLE_BADGE_CLASSES).forEach(c => badge.classList.remove(c));
+            badge.classList.add(ROLE_BADGE_CLASSES[role] || 'role-Faculty');
+        }
+        if (roleLabel) roleLabel.textContent = role || 'Staff';
+        if (roleIcon)  roleIcon.className = `fa-solid ${ROLE_ICONS[role] || 'fa-id-badge'}`;
+        if (roleEmail) roleEmail.textContent = currentMember.email || '';
+        // Update header display name to match member record
+        const hdr = document.getElementById('user-name');
+        if (hdr && currentMember.name) hdr.textContent = currentMember.name;
+    } else {
+        myWorkBtn?.classList.add('hidden-safely');
+        labBtn?.classList.add('hidden-safely');
+        badge?.classList.add('hidden-safely');
+    }
+}
+
+// ── MY WORK VIEW ──────────────────────────────────────────────────────
+function renderMyWorkView() {
+    const container = document.getElementById('mywork-content');
+    if (!container) return;
+    if (!currentMember) {
+        container.innerHTML = `
+            <div class="text-center py-16">
+                <i class="fa-solid fa-id-badge text-4xl text-slate-700 mb-4"></i>
+                <p class="text-slate-400 font-medium">No staff role assigned to your account.</p>
+                <p class="text-slate-600 text-sm mt-1">Contact the administrator to be added as a member.</p>
+            </div>`;
+        return;
+    }
+    const role       = currentMember.role;
+    const userEmail  = currentUser?.email?.toLowerCase().trim() || '';
+    const assignedTickets = allTickets.filter(t => t.assignedToEmail && t.assignedToEmail.toLowerCase().trim() === userEmail);
+    const pending    = assignedTickets.filter(t => (t.workStatus||'pending') === 'pending').length;
+    const accepted   = assignedTickets.filter(t => t.workStatus === 'accepted').length;
+    const done       = assignedTickets.filter(t => t.workStatus === 'done' || t.workStatus === 'confirmed').length;
+
+    let html = `
+        <div class="mb-6 flex items-start gap-4 bg-slate-900 border border-slate-700 rounded-2xl p-5">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-slate-800 border border-slate-700 text-2xl ${ROLE_COLORS[role]||'text-indigo-400'}">
+                <i class="fa-solid ${ROLE_ICONS[role]||'fa-id-badge'}"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-white font-bold text-base">${escHTML(currentMember.name)}</p>
+                <p class="text-sm ${ROLE_COLORS[role]||'text-slate-400'} font-semibold mt-0.5">${escHTML(role)}</p>
+                <p class="text-xs text-slate-500 mt-0.5">${escHTML(currentMember.email||'')}</p>
+            </div>
+            ${(role==='Lab Assistant'||role==='Technician') ? `<button onclick="switchView('labstatus')" class="shrink-0 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-cyan-500/20 transition"><i class="fa-solid fa-flask-vial mr-1"></i> Lab Status</button>` : ''}
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-slate-900 border border-amber-500/20 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-amber-400">${pending}</p>
+                <p class="text-xs text-slate-400 mt-1">Pending</p>
+            </div>
+            <div class="bg-slate-900 border border-emerald-500/20 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-emerald-400">${accepted}</p>
+                <p class="text-xs text-slate-400 mt-1">Accepted</p>
+            </div>
+            <div class="bg-slate-900 border border-indigo-500/20 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-indigo-400">${done}</p>
+                <p class="text-xs text-slate-400 mt-1">Completed</p>
+            </div>
+        </div>`;
+
+    if (role === 'Principal' || role === 'HOD') {
+        const openCount   = allTickets.filter(t => t.status === 'open').length;
+        const closedCount = allTickets.filter(t => t.status === 'closed').length;
+        html += `
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-white">${allTickets.length}</p>
+                <p class="text-xs text-slate-400 mt-1">Total Tickets</p>
+            </div>
+            <div class="bg-slate-900 border border-rose-500/20 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-rose-400">${openCount}</p>
+                <p class="text-xs text-slate-400 mt-1">Open</p>
+            </div>
+            <div class="bg-slate-900 border border-emerald-500/20 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-emerald-400">${closedCount}</p>
+                <p class="text-xs text-slate-400 mt-1">Closed</p>
+            </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-6">
+            <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-users text-indigo-400"></i> Staff Members</h3>
+            ${allMembers.filter(m=>m.status==='approved').map(m=>`<div class="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
+                <div><p class="text-sm font-medium text-white">${escHTML(m.name)}</p>
+                <p class="text-xs text-slate-500">${escHTML(m.role||'')} · ${escHTML(m.email||'')}</p></div>
+            </div>`).join('')||'<p class="text-slate-500 text-xs">No approved members yet.</p>'}
+        </div>`;
+    }
+
+    if (role === 'Faculty') {
+        html += `<div class="bg-slate-900 border border-emerald-500/20 rounded-xl p-4 mb-6">
+            <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-chalkboard-user text-emerald-400"></i> Faculty Portfolio</h3>
+            <div class="flex flex-wrap gap-2 mt-3">
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold">Teaching Staff</span>
+                <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold">Course Instructor</span>
+                <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-3 py-1 rounded-full text-xs font-semibold">Student Mentor</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-3">Your assigned tasks appear below.</p>
+        </div>`;
+    }
+
+    if (role === 'Technician') {
+        html += `<div class="bg-slate-900 border border-amber-500/20 rounded-xl p-4 mb-6">
+            <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Maintenance Technician</h3>
+            <p class="text-xs text-slate-400">Accept assigned tasks and mark done with a photo once resolved.</p>
+        </div>`;
+    }
+
+    if (role === 'Lab Assistant') {
+        html += `<div class="bg-slate-900 border border-cyan-500/20 rounded-xl p-4 mb-6">
+            <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2"><i class="fa-solid fa-flask text-cyan-400"></i> Lab Assistant</h3>
+            <p class="text-xs text-slate-400 mb-3">Manage lab equipment and handle maintenance tasks.</p>
+            <button onclick="switchView('labstatus')" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-4 py-2 rounded-xl text-xs font-semibold hover:bg-cyan-500/20 transition">
+                <i class="fa-solid fa-flask-vial mr-1"></i> Open Lab Status Dashboard
+            </button>
+        </div>`;
+    }
+
+    html += `<h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-indigo-400"></i> My Assigned Tasks
+        <span class="ml-auto text-xs text-slate-500 font-normal">${assignedTickets.length} task${assignedTickets.length!==1?'s':''}</span>
+    </h3>`;
+
+    if (!assignedTickets.length) {
+        html += `<div class="text-center py-12 bg-slate-900 border border-slate-800 rounded-2xl">
+            <i class="fa-solid fa-inbox text-3xl text-slate-700 mb-3"></i>
+            <p class="text-slate-400 text-sm font-medium">No tasks assigned yet</p>
+            <p class="text-slate-600 text-xs mt-1">The admin will assign tickets here.</p>
+        </div>`;
+    } else {
+        html += assignedTickets.map(t => {
+            const ws = t.workStatus || 'pending';
+            const statusClass = {pending:'task-pending',accepted:'task-accepted',rejected:'task-rejected',done:'task-done',confirmed:'task-confirmed'}[ws]||'task-pending';
+            const statusLabel = {pending:'⏳ Pending',accepted:'✅ Accepted',rejected:'❌ Rejected',done:'✔ Done',confirmed:'🟣 Confirmed'}[ws]||'Pending';
+            const catColor = {Maintenance:'text-amber-400',IT:'text-blue-400',Academic:'text-green-400',Other:'text-slate-400'}[t.category]||'text-slate-400';
+            return `<div class="task-card ${statusClass} mb-3">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-white text-sm leading-snug">${escHTML(t.title||'Untitled')}</p>
+                        <p class="text-xs ${catColor} mt-0.5 font-medium">${escHTML(t.category||'General')}</p>
+                    </div>
+                    <span class="shrink-0 text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${ws==='pending'?'bg-amber-500/15 text-amber-400':ws==='accepted'?'bg-emerald-500/15 text-emerald-400':ws==='rejected'?'bg-rose-500/15 text-rose-400':'bg-indigo-500/15 text-indigo-400'}">${statusLabel}</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed mb-3 line-clamp-2">${escHTML(t.description||'')}</p>
+                <p class="text-[10px] text-slate-600 mb-3">Assigned ${timeAgo(t.assignedAt||t.updatedAtMs||t.createdAtMs)}</p>
+                <div class="flex flex-wrap gap-2">
+                    ${ws==='pending'?`
+                    <button onclick="setWorkStatus('${t.id}','accepted')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1"><i class="fa-solid fa-check"></i> Accept</button>
+                    <button onclick="setWorkStatus('${t.id}','rejected')" class="flex-1 bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1"><i class="fa-solid fa-xmark"></i> Reject</button>`:''}
+                    ${ws==='accepted'?`<button onclick="markTaskDoneWithPhoto('${t.id}')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1"><i class="fa-solid fa-camera"></i> Mark Done + Photo</button>`:''}
+                    ${ws==='done'||ws==='confirmed'?`<span class="text-xs text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Completed — awaiting admin confirmation</span>`:''}
+                    ${ws==='rejected'?`<button onclick="setWorkStatus('${t.id}','pending')" class="text-xs text-amber-400 hover:text-amber-300 transition flex items-center gap-1"><i class="fa-solid fa-undo text-[10px]"></i> Undo Reject</button>`:''}
+                </div>
+                ${t.donePhotoUrl?`<img src="${t.donePhotoUrl}" alt="Completion photo" class="mt-3 rounded-xl max-h-40 object-cover border border-slate-700 w-full cursor-pointer" onclick="window.open('${t.donePhotoUrl}','_blank')">`:''}
+            </div>`;
+        }).join('');
+    }
+    container.innerHTML = html;
+}
+
+window.setWorkStatus = async function(ticketId, status) {
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), { workStatus: status, updatedAtMs: Date.now() });
+        showToast(`Task ${status}.`);
+        if (currentView === 'mywork') renderMyWorkView();
+        if (isAdmin && currentView === 'tickets') renderTickets();
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+window.markTaskDoneWithPhoto = function(ticketId) {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = async function() {
+        const file = inp.files[0]; if (!file) return;
+        showToast('Uploading completion photo...', 'info');
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('upload_preset', 'unsigned_support_upload');
+            fd.append('folder', 'bit_updates/completions');
+            fd.append('tags', `ticket_${ticketId},done`);
+            const res  = await fetch('https://api.cloudinary.com/v1_1/dexvhopqs/image/upload', { method:'POST', body:fd });
+            const data = await res.json();
+            if (!data.secure_url) throw new Error('Upload failed');
+            await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), {
+                workStatus: 'done', donePhotoUrl: data.secure_url, doneAt: Date.now(), updatedAtMs: Date.now()
+            });
+            showToast('Marked as done with photo!');
+            if (currentView === 'mywork') renderMyWorkView();
+        } catch(e) { showToast('Upload failed: ' + e.message, 'error'); }
+    };
+    inp.click();
+};
+
+// ── LAB STATUS VIEW ───────────────────────────────────────────────────
+const DEFAULT_LAB_ITEMS = [
+    { name:'Ceiling Fans',       icon:'fa-fan',          totalCount:10, workingCount:10, notes:'', room:'Computer Lab' },
+    { name:'Air Conditioners',   icon:'fa-snowflake',    totalCount:3,  workingCount:3,  notes:'', room:'Computer Lab' },
+    { name:'Projectors',         icon:'fa-display',      totalCount:2,  workingCount:2,  notes:'', room:'Computer Lab' },
+    { name:'Desktop Computers',  icon:'fa-desktop',      totalCount:40, workingCount:40, notes:'', room:'Computer Lab' },
+    { name:'Tube Lights',        icon:'fa-lightbulb',    totalCount:20, workingCount:20, notes:'', room:'Computer Lab' },
+    { name:'Power Boards',       icon:'fa-plug',         totalCount:10, workingCount:10, notes:'', room:'Computer Lab' },
+];
+let labEquipCache = {};
+
+function renderLabStatusView() {
+    const container = document.getElementById('labstatus-content');
+    if (!container) return;
+    const canEdit = isAdmin || (currentMember && (currentMember.role === 'Lab Assistant' || currentMember.role === 'Technician'));
+    container.innerHTML = `<div class="text-center py-10 text-indigo-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><p class="text-sm text-slate-400">Loading lab data...</p></div>`;
+    rtdbGet(rtdbRef(rtdb, LAB_EQUIPMENT_PATH)).then(snap => {
+        let items = {};
+        if (snap.exists()) {
+            items = snap.val();
+        } else if (canEdit) {
+            const seeds = {};
+            DEFAULT_LAB_ITEMS.forEach((item, i) => {
+                seeds[`item_${i+1}`] = { ...item, updatedAt: Date.now(), updatedBy: currentMember?.name || 'Admin' };
+            });
+            rtdbSet(rtdbRef(rtdb, LAB_EQUIPMENT_PATH), seeds);
+            items = seeds;
+        }
+        labEquipCache = items;
+        renderLabCards(items, canEdit, container);
+    }).catch(e => {
+        container.innerHTML = `<p class="text-rose-400 text-sm p-4">Failed to load lab data: ${escHTML(e.message)}</p>`;
+    });
+}
+
+function renderLabCards(items, canEdit, container) {
+    const entries = Object.entries(items);
+    if (!entries.length) { container.innerHTML = `<p class="text-slate-500 text-sm text-center py-10">No equipment data yet.</p>`; return; }
+    const healthyItems  = entries.filter(([,v])=>(v.workingCount||0)>=(v.totalCount||0)).length;
+    const criticalItems = entries.filter(([,v])=>(v.workingCount||0)===0 && (v.totalCount||0)>0).length;
+
+    let html = `
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center text-cyan-400 text-xl"><i class="fa-solid fa-flask-vial"></i></div>
+        <div>
+            <h2 class="text-white font-bold text-lg">Lab Equipment Status</h2>
+            <p class="text-xs text-slate-400">${entries.length} items · <span class="text-emerald-400">${healthyItems} healthy</span> · <span class="text-rose-400">${criticalItems} critical</span></p>
+        </div>
+        <button onclick="renderLabStatusView()" class="ml-auto text-xs text-slate-400 hover:text-white bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-rotate-right mr-1"></i> Refresh</button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    ${entries.map(([key, item]) => {
+        const pct       = item.totalCount > 0 ? Math.round(((item.workingCount||0)/item.totalCount)*100) : 0;
+        const broken    = (item.totalCount||0) - (item.workingCount||0);
+        const health    = pct>=80?'equip-healthy':pct>=40?'equip-warning':'equip-critical';
+        const barColor  = pct>=80?'#10b981':pct>=40?'#f59e0b':'#ef4444';
+        const statusLabel = pct>=80?'Healthy':pct>=40?'Warning':'Critical';
+        const statusColor = pct>=80?'text-emerald-400':pct>=40?'text-amber-400':'text-rose-400';
+        return `<div class="equip-card ${health}">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400"><i class="fa-solid ${item.icon||'fa-cube'}"></i></div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-white text-sm">${escHTML(item.name)}</p>
+                    <p class="text-xs ${statusColor} font-medium">${statusLabel} · ${escHTML(item.room||'')}</p>
+                </div>
+            </div>
+            <div class="flex items-end justify-between mb-2">
+                <div>
+                    <p class="text-2xl font-bold text-white">${item.workingCount||0}<span class="text-sm text-slate-500 font-normal">/${item.totalCount||0}</span></p>
+                    <p class="text-[10px] text-slate-500">Working · ${broken} broken</p>
+                </div>
+                <p class="text-xl font-bold ${statusColor}">${pct}%</p>
+            </div>
+            <div class="equip-bar mb-3"><div class="equip-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            ${item.notes?`<p class="text-xs text-slate-500 italic mb-2">"${escHTML(item.notes)}"</p>`:''}
+            ${item.updatedBy?`<p class="text-[10px] text-slate-700 mb-2">Updated by ${escHTML(item.updatedBy)}</p>`:''}
+            ${canEdit?`<div class="border-t border-slate-800 pt-3 flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 w-16 shrink-0">Working:</span>
+                    <button onclick="adjustEquip('${key}','working',-1)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-white hover:bg-rose-500/20 hover:border-rose-500/40 transition text-xs flex items-center justify-center">−</button>
+                    <span class="text-sm font-bold text-white w-8 text-center">${item.workingCount||0}</span>
+                    <button onclick="adjustEquip('${key}','working',1)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-white hover:bg-emerald-500/20 hover:border-emerald-500/40 transition text-xs flex items-center justify-center">+</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 w-16 shrink-0">Total:</span>
+                    <button onclick="adjustEquip('${key}','total',-1)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-white hover:bg-rose-500/20 hover:border-rose-500/40 transition text-xs flex items-center justify-center">−</button>
+                    <span class="text-sm font-bold text-white w-8 text-center">${item.totalCount||0}</span>
+                    <button onclick="adjustEquip('${key}','total',1)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-white hover:bg-emerald-500/20 hover:border-emerald-500/40 transition text-xs flex items-center justify-center">+</button>
+                </div>
+                <input type="text" value="${escHTML(item.notes||'')}" placeholder="Notes (e.g. Fan #3 broken)..." maxlength="100"
+                    class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg p-2 w-full transition"
+                    onchange="updateEquipNotes('${key}', this.value)">
+            </div>`:''}
+        </div>`;
+    }).join('')}
+    </div>`;
+    container.innerHTML = html;
+}
+
+window.adjustEquip = async function(key, field, delta) {
+    const item = labEquipCache[key]; if (!item) return;
+    if (field === 'working') {
+        labEquipCache[key].workingCount = Math.max(0, Math.min(item.totalCount||0, (item.workingCount||0) + delta));
+    } else {
+        labEquipCache[key].totalCount   = Math.max(0, (item.totalCount||0) + delta);
+        labEquipCache[key].workingCount = Math.min(labEquipCache[key].workingCount||0, labEquipCache[key].totalCount);
+    }
+    labEquipCache[key].updatedAt  = Date.now();
+    labEquipCache[key].updatedBy  = currentMember?.name || currentUser?.displayName || 'Staff';
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${LAB_EQUIPMENT_PATH}/${key}`), {
+            workingCount: labEquipCache[key].workingCount,
+            totalCount:   labEquipCache[key].totalCount,
+            updatedAt:    labEquipCache[key].updatedAt,
+            updatedBy:    labEquipCache[key].updatedBy
+        });
+        const container = document.getElementById('labstatus-content');
+        const canEdit   = isAdmin || (currentMember && (currentMember.role==='Lab Assistant'||currentMember.role==='Technician'));
+        renderLabCards(labEquipCache, canEdit, container);
+    } catch(e) { showToast('Save failed: ' + e.message, 'error'); }
+};
+
+window.updateEquipNotes = async function(key, notes) {
+    if (!labEquipCache[key]) return;
+    labEquipCache[key].notes = notes;
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${LAB_EQUIPMENT_PATH}/${key}`), {
+            notes, updatedAt: Date.now(), updatedBy: currentMember?.name || currentUser?.displayName || 'Staff'
+        });
+        showToast('Notes saved.');
+    } catch(e) { showToast('Save failed: ' + e.message, 'error'); }
+};
+
+// Admin can confirm completed tasks
+window.confirmTaskDone = async function(ticketId) {
+    if (!isAdmin) { showToast('Admin only.', 'error'); return; }
+    try {
+        await rtdbUpdate(rtdbRef(rtdb, `${TICKETS_COLLECTION}/${ticketId}`), {
+            workStatus: 'confirmed', status: 'closed', updatedAtMs: Date.now()
+        });
+        showToast('Task confirmed and ticket closed!');
+        if (currentView === 'tickets') renderTickets();
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('#notif-panel') && !e.target.closest('#btn-bell'))
+        document.getElementById('notif-panel')?.classList.add('hidden-safely');
+});
+
+// Admin: send a standalone notification (not tied to an announcement)
+window.sendAdminNotification = async function() {
+    if (!isAdmin) { showToast('Admin only.', 'error'); return; }
+    const title = document.getElementById('notif-send-title').value.trim();
+    const body  = document.getElementById('notif-send-body').value.trim();
+    if (!title || !body) { showToast('Fill in title and message.', 'error'); return; }
+    try {
+        await push(rtdbRef(rtdb, NOTIFICATIONS_PATH), {
+            title, body, createdAtMs: Date.now()
+        });
+        document.getElementById('notif-send-title').value = '';
+        document.getElementById('notif-send-body').value  = '';
+        showToast('Notification broadcast to all users!');
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+};
+</script>
+</body>
+</html>
